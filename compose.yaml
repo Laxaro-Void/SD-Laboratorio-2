@@ -1,0 +1,58 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  server:
+    build:
+      context: ./server
+    container_name: server-container
+    ports:
+      - "50051:50051"
+    environment:
+      - PORT=50051
+      - RABBITMQ-URL=amqp://guest:guest@rabbitmq:5672/
+      - WORKER-IP=worker-container:50052
+    networks:
+      default:
+        aliases:
+          - server-container
+
+  worker:
+    build:
+      context: ./worker
+    container_name: worker-container
+    ports:
+      - "50052-50062:50052"
+    environment:
+      - PORT=50052
+      - RABBITMQ-URL=amqp://guest:guest@rabbitmq:5672/
+      - SERVER-IP=server-container:50051
+    networks:
+      default:
+        aliases:
+          - worker-container
+
+  client:
+    build:
+      context: ./client
+    container_name: client-container
+    volumes:
+      - ./client/output:/app/output
+    ports:
+      - "8080-8090:8080"
+    environment:
+      - PORT=8080
+      - RABBITMQ-URL=amqp://guest:guest@rabbitmq:5672/
+      - SERVER-IP=server-container:50051
+    networks:
+      default:
+        aliases:
+          - client-container
+

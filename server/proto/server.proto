@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./server";
+package server;
+
+//
+service ServerService {
+  //
+  rpc Submit (ServerRequest) returns (ServerResponse);
+}
+
+message ServerRequest {
+  string task_name = 1;
+  int32 task_data = 2;
+}
+
+message ServerResponse {
+  string status = 1;
+}
