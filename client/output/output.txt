@@ -1,3 +1,0 @@
-Hello output file from client
-This is a string from a int 67
-This is a int from a string 76

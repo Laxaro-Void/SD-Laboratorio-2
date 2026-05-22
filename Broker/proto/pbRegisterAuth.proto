@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "./pbRegisterAuth";
+package pbRegisterAuth;
+
+// Service for Register and Authentication of Consumers, Productors
+service RegisterAuth {
+    // Register a new consumer o productor
+    rpc Register (RegisterRequest) returns (RegisterResponse);
+    
+    // Authenticate an existing consumer o productor
+    rpc Authenticate (AuthRequest) returns (AuthResponse);
+}
+
+message RegisterRequest {
+    string username = 1;
+    string type = 2; // "consumer" o "productor"
+}
+
+message RegisterResponse {
+    string uuid = 1;
+    bool success = 2;
+    string message = 3;
+}
+
+message AuthRequest {
+    string username = 1;
+    string uuid = 2;
+}
+
+message AuthResponse {
+    bool success = 1;
+    string message = 2;
+}
