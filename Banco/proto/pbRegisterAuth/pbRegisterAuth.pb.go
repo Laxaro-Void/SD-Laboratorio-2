@@ -24,6 +24,7 @@ const (
 type RegisterRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // "consumer" o "producer"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,10 +66,18 @@ func (x *RegisterRequest) GetUsername() string {
 	return ""
 }
 
+func (x *RegisterRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 type RegisterResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -108,6 +117,13 @@ func (x *RegisterResponse) GetUuid() string {
 		return x.Uuid
 	}
 	return ""
+}
+
+func (x *RegisterResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
 }
 
 func (x *RegisterResponse) GetMessage() string {
@@ -225,12 +241,14 @@ var File_Banco_proto_pbRegisterAuth_proto protoreflect.FileDescriptor
 
 const file_Banco_proto_pbRegisterAuth_proto_rawDesc = "" +
 	"\n" +
-	" Banco/proto/pbRegisterAuth.proto\x12\x0epbRegisterAuth\"-\n" +
+	" Banco/proto/pbRegisterAuth.proto\x12\x0epbRegisterAuth\"A\n" +
 	"\x0fRegisterRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\"@\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\"Z\n" +
 	"\x10RegisterResponse\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"=\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"=\n" +
 	"\vAuthRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x12\n" +
 	"\x04uuid\x18\x02 \x01(\tR\x04uuid\"B\n" +

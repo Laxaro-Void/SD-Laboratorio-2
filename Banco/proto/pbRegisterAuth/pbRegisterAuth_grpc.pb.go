@@ -27,11 +27,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Service for Register and Authentication of Users, Productors
+// Service for Register and Authentication of Consumers, Productors
 type RegisterAuthClient interface {
-	// Register a new user o productor
+	// Register a new consumer o producer
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
-	// Authenticate an existing user o productor
+	// Authenticate an existing consumer o producer
 	Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 }
 
@@ -67,11 +67,11 @@ func (c *registerAuthClient) Authenticate(ctx context.Context, in *AuthRequest, 
 // All implementations must embed UnimplementedRegisterAuthServer
 // for forward compatibility.
 //
-// Service for Register and Authentication of Users, Productors
+// Service for Register and Authentication of Consumers, Productors
 type RegisterAuthServer interface {
-	// Register a new user o productor
+	// Register a new consumer o producer
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
-	// Authenticate an existing user o productor
+	// Authenticate an existing consumer o producer
 	Authenticate(context.Context, *AuthRequest) (*AuthResponse, error)
 	mustEmbedUnimplementedRegisterAuthServer()
 }

@@ -24,7 +24,7 @@ const (
 type RegisterRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // "user" o "productor"
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // "consumer", "producer", "banco", "BD"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -137,6 +137,7 @@ type AuthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Direction     *string                `protobuf:"bytes,3,opt,name=direction,proto3,oneof" json:"direction,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,6 +182,13 @@ func (x *AuthRequest) GetUsername() string {
 func (x *AuthRequest) GetUuid() string {
 	if x != nil {
 		return x.Uuid
+	}
+	return ""
+}
+
+func (x *AuthRequest) GetDirection() string {
+	if x != nil && x.Direction != nil {
+		return *x.Direction
 	}
 	return ""
 }
@@ -248,10 +256,13 @@ const file_Broker_proto_pbRegisterAuth_proto_rawDesc = "" +
 	"\x10RegisterResponse\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"=\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"n\n" +
 	"\vAuthRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x12\n" +
-	"\x04uuid\x18\x02 \x01(\tR\x04uuid\"B\n" +
+	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12!\n" +
+	"\tdirection\x18\x03 \x01(\tH\x00R\tdirection\x88\x01\x01B\f\n" +
+	"\n" +
+	"_direction\"B\n" +
 	"\fAuthResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage2\xa8\x01\n" +
@@ -295,6 +306,7 @@ func file_Broker_proto_pbRegisterAuth_proto_init() {
 	if File_Broker_proto_pbRegisterAuth_proto != nil {
 		return
 	}
+	file_Broker_proto_pbRegisterAuth_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

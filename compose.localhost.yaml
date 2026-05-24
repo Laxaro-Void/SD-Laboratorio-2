@@ -55,8 +55,10 @@ services:
       context: ./Productor
     ports:
       - "5003-5009:5003"
+    volumes:
+      - ./Productor/keys:/app/keys
     environment:
-      - "NAME=Productor1"
+      - "NAME=DataClub"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
 
@@ -65,8 +67,10 @@ services:
       context: ./Productor
     ports:
       - "5003-5009:5003"
+    volumes:
+      - ./Productor/keys:/app/keys
     environment:
-      - "NAME=Productor2"
+      - "NAME=Dockers Night"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
     
@@ -75,8 +79,10 @@ services:
       context: ./Productor
     ports:
       - "5003-5009:5003"
+    volumes:
+      - ./Productor/keys:/app/keys
     environment:
-      - "NAME=Productor3"
+      - "NAME=GoLounge"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
 
@@ -85,8 +91,10 @@ services:
       context: ./Productor
     ports:
       - "5003-5009:5003"
+    volumes:
+      - ./Productor/keys:/app/keys
     environment:
-      - "NAME=Productor4"
+      - "NAME=GeorgieHouse"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
 

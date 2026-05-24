@@ -1,9 +1,8 @@
-module server
+module Productor
 
 go 1.23.8
 
 require (
-	github.com/rabbitmq/amqp091-go v1.11.0
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.5
 )

@@ -5,16 +5,16 @@ package pbRegisterAuth;
 
 // Service for Register and Authentication of Consumers, Productors
 service RegisterAuth {
-    // Register a new consumer o productor
+    // Register a new consumer o producer
     rpc Register (RegisterRequest) returns (RegisterResponse);
     
-    // Authenticate an existing consumer o productor
+    // Authenticate an existing consumer o producer
     rpc Authenticate (AuthRequest) returns (AuthResponse);
 }
 
 message RegisterRequest {
     string username = 1;
-    string type = 2; // "consumer" o "productor"
+    string type = 2; // "consumer", "producer", "banco", "BD"
 }
 
 message RegisterResponse {
@@ -26,6 +26,7 @@ message RegisterResponse {
 message AuthRequest {
     string username = 1;
     string uuid = 2;
+    optional string direction = 3;
 }
 
 message AuthResponse {

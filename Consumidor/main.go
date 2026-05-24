@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -48,8 +47,6 @@ func (c *Consumer) ReadUUID() (string, bool) {
 	scanner.Scan()
 
 	uuid := scanner.Text()
-
-	fmt.Println(uuid)
 	return uuid, true
 }
 
@@ -74,6 +71,45 @@ func (c *Consumer) Register(username string) (string, bool) {
 	return response.Uuid, true
 }
 
+func (c *Consumer) Authenciate(username string, uuid string) bool {
+	message := pbRegisterAuth.AuthRequest{
+		Username: username,
+		Uuid: uuid,
+	}
+
+	response, err := c.RegisterAuthClient.Authenticate(context.Background(), &message)
+	if err != nil {
+		log.Printf("Error authenticating consumer: %v", err)
+		return false
+	}
+
+	log.Println(response.Message)
+	return response.Success
+}
+
+func (c *Consumer) LoginSession() bool {
+	key, succes := c.ReadUUID()
+	if succes {
+		succes = c.Authenciate(os.Getenv("NAME"), key)
+	}
+
+	if !succes {
+		for {
+			key, succes = c.Register(os.Getenv("NAME"))
+			if succes {
+				break;
+			}
+			log.Println("Retrining in 5 second...")
+			time.Sleep(5 * time.Second)
+		}
+		c.SaveUUID(key)
+	} else {
+		return true
+	}
+
+	return c.Authenciate(os.Getenv("NAME"), key)
+}
+
 func NewGRPCClient(address string) *grpc.ClientConn {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -92,14 +128,7 @@ func initConsumer() {
 		KeyPath: "keys/" + os.Getenv("NAME") + "-key.txt",
 	}
 
-	key, succes := consumer.Register(os.Getenv("NAME"))
-	if !succes {
-		log.Fatalln("Unable to Register to Broker :(")
-	}
-
-	consumer.SaveUUID(key)
-	key, succes = consumer.ReadUUID()
-	log.Println(key)
+	consumer.LoginSession()
 }
 
 func main() {
