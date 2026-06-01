@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./pbBancoUSM";
+package pbBancoUSM;
+
+service BancoUSM {
+    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
+}
+
+message Empty {
+
+}
+
+message IsAliveResponde {
+    bool isAlive = 1;
+}

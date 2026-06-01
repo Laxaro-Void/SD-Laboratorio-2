@@ -22,27 +22,27 @@ localhost-VM1:
 	sudo docker-compose -f compose.localhost.yaml up --remove-orphans broker
 
 localhost-VM2:
-	sudo docker compose -f compose.localhost.yaml build productor1 productor2 productor3 productor4 dynamodb
+	sudo docker compose -f compose.localhost.yaml build productor1 productor2 productor3 productor4 dynamodb1
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor1
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor2
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor3
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor4
 
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d dynamodb
-	sudo docker compose -f compose.localhost.yaml logs -f productor1 productor2 productor3 productor4 dynamodb
+	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d dynamodb1
+	sudo docker compose -f compose.localhost.yaml logs -f productor1 productor2 productor3 productor4 dynamodb1
 
 localhost-VM3:
-	sudo docker-compose -f compose.localhost.yaml build consumidor1 consumidor2 dynamodb
+	sudo docker-compose -f compose.localhost.yaml build consumidor1 consumidor2 dynamodb2
 
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d consumidor1
 	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d consumidor2
 
-	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d dynamodb
-	sudo docker-compose -f compose.localhost.yaml logs -f consumidor1 consumidor2 dynamodb
+	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d dynamodb2
+	sudo docker-compose -f compose.localhost.yaml logs -f consumidor1 consumidor2 dynamodb2
 
 localhost-VM4:
-	sudo docker-compose -f compose.localhost.yaml build banco dynamodb
-	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d banco dynamodb
-	sudo docker-compose -f compose.localhost.yaml logs -f banco dynamodb
+	sudo docker-compose -f compose.localhost.yaml build banco dynamodb3
+	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d banco dynamodb3
+	sudo docker-compose -f compose.localhost.yaml logs -f banco dynamodb3
 
 

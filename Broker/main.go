@@ -7,68 +7,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 
 	dsRegisterMap "Broker/dsRegisterMap"
+	dsUUID "Broker/dsUUID"
+	dsConextionManager "Broker/dsConexionManager"
 	pbRegisterAuth "Broker/proto/pbRegisterAuth"
+	pbConsumer "Broker/proto/pbConsumer"
 )
-
-type BancoConnection struct {
-	direction *string
-	connection *grpc.ClientConn
-	client pbRegisterAuth.RegisterAuthClient // change
-	state string
-}
-
-func (c *BancoConnection) Connect() {
-	if c.direction == nil {
-		return
-	}
-
-	if c.state == "Disconected" {
-		c.connection = NewGRPCClient(*c.direction)
-		c.client = pbRegisterAuth.NewRegisterAuthClient(c.connection)
-		c.state = "Connected"
-	}
-}
-
-
-
-type BDConnection struct {
-	direction *string
-	connection *grpc.ClientConn
-	client pbRegisterAuth.RegisterAuthClient // change
-	state string
-}
-
-func (c *BDConnection) Connect() {
-	if c.direction == nil {
-		return
-	}
-
-	if c.state == "Disconected" {
-		c.connection = NewGRPCClient(*c.direction)
-		c.client = pbRegisterAuth.NewRegisterAuthClient(c.connection)
-		c.state = "Connected"
-	}
-}
 
 type Broker struct {
 	// Registered users and productors
-	registeredUsers      *dsRegisterMap.RegisterMap // uuid:username
-	registeredProducer   *dsRegisterMap.RegisterMap // productorName:password
-	registeredBanco		 *dsRegisterMap.RegisterMap
-	registeredBD		 *dsRegisterMap.RegisterMap
+	trustedConexions *dsRegisterMap.RegisterMap
+	authenticatedConexions *dsRegisterMap.RegisterMap
 
-	// Active sessions
-	activeUserSessions 		 *dsRegisterMap.RegisterMap // uuid:username/productorName
-	activeProducerSessions 	 *dsRegisterMap.RegisterMap // uuid:username/productorName
-	activeBancoSessions 	 *dsRegisterMap.RegisterMap // uuid:username/productorName
-	activeBDSessions 		 *dsRegisterMap.RegisterMap // uuid:username/productorName
-
-	bancoUSM  *BancoConnection
-	bdNodes []*BDConnection
+	bancoUSM  *dsConextionManager.BancoUSM
+	dynamoDBClient *dsConextionManager.DynamoDB
 }
 
 type RegisterAuthServer struct {
@@ -76,21 +30,16 @@ type RegisterAuthServer struct {
 	broker *Broker
 }
 
+type ConsumerServer struct {
+	pbConsumer.UnimplementedConsumerServer
+	broker *Broker
+}
+
 /*
-Registra un nuevo producto o consumidor al sistema.
+Registra una nueva conexion al servidor
 */
 func (s *RegisterAuthServer) Register(ctx context.Context, req *pbRegisterAuth.RegisterRequest) (*pbRegisterAuth.RegisterResponse, error) {
-	var register *dsRegisterMap.RegisterMap
-	switch req.Type {
-	case "consumer":
-		register = s.broker.registeredUsers
-	case "producer":
-		register = s.broker.registeredProducer
-	case "banco":
-		register = s.broker.registeredBanco
-	case "BD":
-		register = s.broker.registeredBD
-	default:
+	if (req.Type != "consumer" && req.Type != "producer" && req.Type != "banco" && req.Type != "DB") {
 		log.Println("Invalid type. Must be 'consumer' or 'producer'")
 		return &pbRegisterAuth.RegisterResponse{
 			Success: false,
@@ -98,15 +47,15 @@ func (s *RegisterAuthServer) Register(ctx context.Context, req *pbRegisterAuth.R
 		}, nil
 	}
 
-	key := uuid.New().String()
-	for register.Exists(key) {
-		key = uuid.New().String()
+	key := dsUUID.NewUUID()
+	for s.broker.trustedConexions.Exists(key.String()) {
+		key = dsUUID.NewUUID()
 	}
-	register.Add(key, req.Username)
+	s.broker.trustedConexions.Add(key.String(), req.Username)
 
 	log.Println(req.Username + " Register successfuly")
 	return &pbRegisterAuth.RegisterResponse{
-		Uuid:    key,
+		Uuid:    key.String(),
 		Success: true,
 		Message: "Registration successful",
 	}, nil
@@ -118,11 +67,7 @@ Authenticate()
 Autentica a un producto o consumidor registrado en el sistema.
 */
 func (s *RegisterAuthServer) Authenticate(ctx context.Context, req *pbRegisterAuth.AuthRequest) (*pbRegisterAuth.AuthResponse, error) {
-	if  !s.broker.registeredUsers.Exists(req.Uuid)      && 
-		!s.broker.registeredProducer.Exists(req.Uuid)   && 
-		!s.broker.registeredBanco.Exists(req.Uuid)      &&
-		!s.broker.registeredBD.Exists(req.Uuid) {
-		
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
 		log.Println(req.Uuid + " is not registered")
 		return &pbRegisterAuth.AuthResponse{
 			Success: false,
@@ -130,41 +75,81 @@ func (s *RegisterAuthServer) Authenticate(ctx context.Context, req *pbRegisterAu
 		}, nil
 	}
 
-	var register *dsRegisterMap.RegisterMap
-	if s.broker.registeredUsers.Exists(req.Uuid) {
-		register = s.broker.activeUserSessions
-	}   
-	if s.broker.registeredProducer.Exists(req.Uuid) {
-		register = s.broker.activeProducerSessions
-	}
-	if s.broker.registeredBanco.Exists(req.Uuid) {
-		register = s.broker.activeBancoSessions
-		if req.Direction == nil {
-			return &pbRegisterAuth.AuthResponse{
-				Success: false,
-				Message: "Must Append Your Direction",
-			}, nil
-		}
-		s.broker.bancoUSM.direction = req.Direction
-	}
-	if s.broker.registeredBD.Exists(req.Uuid) {
-		register = s.broker.activeBDSessions
-	}
-
-	if register.Exists(req.Uuid) {
+	if s.broker.authenticatedConexions.Exists(req.Uuid) {
 		return &pbRegisterAuth.AuthResponse{
 			Success: true,
 			Message: "You are already Authenticated",
 		}, nil
 	}
 
-	register.Add(req.Uuid, req.Username)
+	s.broker.authenticatedConexions.Add(req.Uuid, req.Username)
 	log.Println(req.Username + " Authenticated successful")
 
 	return &pbRegisterAuth.AuthResponse{
 		Success: true,
 		Message: "Authenticated successful",
 	}, nil
+}
+
+func (s *RegisterAuthServer) RegisterNode(ctx context.Context, req *pbRegisterAuth.RegisterNodeRequest) (*pbRegisterAuth.RegisterNodeResponse, error) {
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
+		log.Println("Recive a Untrusted Node Request")
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
+		log.Println("Recive a not authenticated Node Request")
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.dynamoDBClient.AddConection(req.Direction) {
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "Fail to create Conection",
+		}, nil
+	}
+
+	return &pbRegisterAuth.RegisterNodeResponse{
+		Succes: true,
+		Message: "Conection Stable",
+	}, nil
+}
+
+func (s *RegisterAuthServer) RegisterBanco(ctx context.Context, req *pbRegisterAuth.RegisterNodeRequest) (*pbRegisterAuth.RegisterNodeResponse, error) {
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
+		log.Println("Recive a Untrusted Node Request")
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
+		log.Println("Recive a not authenticated Node Request")
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.bancoUSM.Connect(req.Direction) {
+		return &pbRegisterAuth.RegisterNodeResponse{
+			Succes: false,
+			Message: "Fail to create Conection",
+		}, nil
+	}
+
+	return &pbRegisterAuth.RegisterNodeResponse{
+		Succes: true,
+		Message: "Conection Stable",
+	}, nil
+
 }
 
 func ValidateEvent() {
@@ -199,18 +184,17 @@ func StartRegisterAuthServer(listener net.Listener, broker *Broker) {
 
 func serverBackground() {
 	broker := &Broker{
-		registeredUsers:      dsRegisterMap.NewRegisterMap(),
-		registeredProducer:   dsRegisterMap.NewRegisterMap(),
-		registeredBanco: 	  dsRegisterMap.NewRegisterMap(),
-		registeredBD: 	      dsRegisterMap.NewRegisterMap(),
-
-		activeUserSessions :	 dsRegisterMap.NewRegisterMap(),
-		activeProducerSessions:  dsRegisterMap.NewRegisterMap(),
-		activeBancoSessions: 	 dsRegisterMap.NewRegisterMap(),
-		activeBDSessions:		 dsRegisterMap.NewRegisterMap(),
+		trustedConexions:      dsRegisterMap.NewRegisterMap(),
+		authenticatedConexions:   dsRegisterMap.NewRegisterMap(),
 		
-		
+		bancoUSM: new(dsConextionManager.BancoUSM),
+		dynamoDBClient: new(dsConextionManager.DynamoDB),
 	}
+
+	broker.dynamoDBClient.N = 3
+	broker.dynamoDBClient.R = 2
+	broker.dynamoDBClient.W = 2
+	broker.dynamoDBClient.Nodes = make(map[string]dsConextionManager.Node)
 
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
@@ -227,8 +211,8 @@ func serverBackground() {
 func NewGRPCClient(address string) *grpc.ClientConn {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Failed to connect to broker: %v", err)
-	}
+		log.Fatalf("Failed to connect to %s: %v", address, err)
+	} 
 	return conn
 }
 

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "./pbProducer";
+package pbProducer;
+
+// Service for Register and Authentication of Consumers, Productors
+service Producer {
+    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
+}
+
+message Empty {
+
+}
+
+message IsAliveResponde {
+    bool isAlive = 1;
+}

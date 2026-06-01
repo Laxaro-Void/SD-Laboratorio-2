@@ -5,10 +5,13 @@ services:
     container_name: banco-container
     ports:
       - "5000:5000"
+    volumes:
+      - ./Banco/keys:/app/keys
     environment:
       - "NAME=Banco"
       - "PORT=5000"
       - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=banco:5000"
     networks:
       default:
         aliases:
@@ -57,10 +60,12 @@ services:
       - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
+      - ./Productor/input:/app/input
     environment:
       - "NAME=DataClub"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
+      - "INPUT_FILE=catalogo_eventos_30.json"
 
   productor2:
     build:
@@ -69,10 +74,12 @@ services:
       - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
+      - ./Productor/input:/app/input
     environment:
       - "NAME=Dockers Night"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
+      - "INPUT_FILE=catalogo_eventos_30.json"
     
   productor3:
     build:
@@ -81,10 +88,12 @@ services:
       - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
+      - ./Productor/input:/app/input
     environment:
       - "NAME=GoLounge"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
+      - "INPUT_FILE=catalogo_eventos_30.json"
 
   productor4:
     build:
@@ -93,21 +102,63 @@ services:
       - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
+      - ./Productor/input:/app/input
     environment:
       - "NAME=GeorgieHouse"
       - "PORT=5003"
       - "BROKER_URL=broker:5001"
+      - "INPUT_FILE=catalogo_eventos_30.json"
 
-  dynamodb:
+  dynamodb1:
     build:
       context: ./DynamoDB
-    container_name: dynamodb-container
     ports:
-      - "8000-8010:8000"
+      - "8001:8000"
+    volumes:
+      - ./DynamoDB/keys:/app/keys
+      - ./DynamoDB/Data:/app/Data
     environment:
-      - "NAME=DynamoDB"
+      - "NAME=DynamoDB-1"
       - "PORT=8000"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=dynamodb-1:8001"
     networks:
       default:
         aliases:
-          - "dynamodb"
+          - "dynamodb-1"
+
+  dynamodb2:
+    build:
+      context: ./DynamoDB
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./DynamoDB/keys:/app/keys
+      - ./DynamoDB/Data:/app/Data
+    environment:
+      - "NAME=DynamoDB-2"
+      - "PORT=8000"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=dynamodb-2:8002"
+    networks:
+      default:
+        aliases:
+          - "dynamodb-2"
+
+  dynamodb3:
+    build:
+      context: ./DynamoDB
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./DynamoDB/keys:/app/keys
+      - ./DynamoDB/Data:/app/Data
+    environment:
+      - "NAME=DynamoDB-3"
+      - "PORT=8000"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=dynamodb-3:8003"
+    networks:
+      default:
+        aliases:
+          - "dynamodb-3"

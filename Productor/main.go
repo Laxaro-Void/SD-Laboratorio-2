@@ -4,9 +4,12 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"time"
+
+	"encoding/json"
 
 	"google.golang.org/grpc"
 
@@ -18,6 +21,10 @@ type Producer struct {
 	RegisterAuthClient pbRegisterAuth.RegisterAuthClient
 
 	KeyPath string
+	InputPath string
+
+	eventosProgramados map[string]Event
+	eventosPublicados  map[string]Event
 }
 
 func (c *Producer) SaveUUID(uuid string) {
@@ -121,6 +128,43 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 	return conn
 }
 
+type Event struct {
+	evento_id string
+	discoteca string
+	nombre_evento string
+	categoria string
+	comuna string
+	precio int
+	stock int
+	fecha_evento time.Time
+	fecha_publicacion time.Time
+}
+
+func (c *Producer) ReadInput() {
+	file, err := os.Open(c.InputPath)
+	if err != nil {
+		log.Fatalf("Faild to open json: %v", err)
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	for {
+		var item Event
+		if err := decoder.Decode(&item); err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Fatalf("Faild to decode item: %v", err)
+		}
+
+		if item.discoteca != os.Getenv("NAME") {
+			continue
+		}
+		log.Printf("Read Event: %+v", item)
+		c.eventosProgramados[item.evento_id] = item
+	}
+}
+
 func initProducer() {
 	BrokerConnection := NewGRPCClient(os.Getenv("BROKER_URL"))
 	defer BrokerConnection.Close()
@@ -128,10 +172,16 @@ func initProducer() {
 	producer := &Producer{
 		BrokerConnection: BrokerConnection,
 		RegisterAuthClient: pbRegisterAuth.NewRegisterAuthClient(BrokerConnection),
+
 		KeyPath: "keys/" + os.Getenv("NAME") + "-key.txt",
+		InputPath: "input/" + os.Getenv("INPUT_FILE"),
+
+		eventosProgramados: make(map[string]Event),
+		eventosPublicados:  make(map[string]Event),
 	}
 
 	producer.LoginSession()
+	producer.ReadInput()
 }
 
 func main() {

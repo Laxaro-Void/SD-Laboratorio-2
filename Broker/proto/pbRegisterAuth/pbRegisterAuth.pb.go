@@ -137,7 +137,6 @@ type AuthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Uuid          string                 `protobuf:"bytes,2,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Direction     *string                `protobuf:"bytes,3,opt,name=direction,proto3,oneof" json:"direction,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -182,13 +181,6 @@ func (x *AuthRequest) GetUsername() string {
 func (x *AuthRequest) GetUuid() string {
 	if x != nil {
 		return x.Uuid
-	}
-	return ""
-}
-
-func (x *AuthRequest) GetDirection() string {
-	if x != nil && x.Direction != nil {
-		return *x.Direction
 	}
 	return ""
 }
@@ -245,6 +237,110 @@ func (x *AuthResponse) GetMessage() string {
 	return ""
 }
 
+type RegisterNodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Direction     string                 `protobuf:"bytes,2,opt,name=direction,proto3" json:"direction,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegisterNodeRequest) Reset() {
+	*x = RegisterNodeRequest{}
+	mi := &file_Broker_proto_pbRegisterAuth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegisterNodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterNodeRequest) ProtoMessage() {}
+
+func (x *RegisterNodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbRegisterAuth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterNodeRequest.ProtoReflect.Descriptor instead.
+func (*RegisterNodeRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbRegisterAuth_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RegisterNodeRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *RegisterNodeRequest) GetDirection() string {
+	if x != nil {
+		return x.Direction
+	}
+	return ""
+}
+
+type RegisterNodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Succes        bool                   `protobuf:"varint,1,opt,name=succes,proto3" json:"succes,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegisterNodeResponse) Reset() {
+	*x = RegisterNodeResponse{}
+	mi := &file_Broker_proto_pbRegisterAuth_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegisterNodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterNodeResponse) ProtoMessage() {}
+
+func (x *RegisterNodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbRegisterAuth_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterNodeResponse.ProtoReflect.Descriptor instead.
+func (*RegisterNodeResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbRegisterAuth_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RegisterNodeResponse) GetSucces() bool {
+	if x != nil {
+		return x.Succes
+	}
+	return false
+}
+
+func (x *RegisterNodeResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_Broker_proto_pbRegisterAuth_proto protoreflect.FileDescriptor
 
 const file_Broker_proto_pbRegisterAuth_proto_rawDesc = "" +
@@ -256,19 +352,24 @@ const file_Broker_proto_pbRegisterAuth_proto_rawDesc = "" +
 	"\x10RegisterResponse\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"n\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"=\n" +
 	"\vAuthRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x12\n" +
-	"\x04uuid\x18\x02 \x01(\tR\x04uuid\x12!\n" +
-	"\tdirection\x18\x03 \x01(\tH\x00R\tdirection\x88\x01\x01B\f\n" +
-	"\n" +
-	"_direction\"B\n" +
+	"\x04uuid\x18\x02 \x01(\tR\x04uuid\"B\n" +
 	"\fAuthResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\xa8\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"G\n" +
+	"\x13RegisterNodeRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1c\n" +
+	"\tdirection\x18\x02 \x01(\tR\tdirection\"H\n" +
+	"\x14RegisterNodeResponse\x12\x16\n" +
+	"\x06succes\x18\x01 \x01(\bR\x06succes\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xdf\x02\n" +
 	"\fRegisterAuth\x12M\n" +
 	"\bRegister\x12\x1f.pbRegisterAuth.RegisterRequest\x1a .pbRegisterAuth.RegisterResponse\x12I\n" +
-	"\fAuthenticate\x12\x1b.pbRegisterAuth.AuthRequest\x1a\x1c.pbRegisterAuth.AuthResponseB\x12Z\x10./pbRegisterAuthb\x06proto3"
+	"\fAuthenticate\x12\x1b.pbRegisterAuth.AuthRequest\x1a\x1c.pbRegisterAuth.AuthResponse\x12Y\n" +
+	"\fRegisterNode\x12#.pbRegisterAuth.RegisterNodeRequest\x1a$.pbRegisterAuth.RegisterNodeResponse\x12Z\n" +
+	"\rRegisterBanco\x12#.pbRegisterAuth.RegisterNodeRequest\x1a$.pbRegisterAuth.RegisterNodeResponseB\x12Z\x10./pbRegisterAuthb\x06proto3"
 
 var (
 	file_Broker_proto_pbRegisterAuth_proto_rawDescOnce sync.Once
@@ -282,20 +383,26 @@ func file_Broker_proto_pbRegisterAuth_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbRegisterAuth_proto_rawDescData
 }
 
-var file_Broker_proto_pbRegisterAuth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_Broker_proto_pbRegisterAuth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_Broker_proto_pbRegisterAuth_proto_goTypes = []any{
-	(*RegisterRequest)(nil),  // 0: pbRegisterAuth.RegisterRequest
-	(*RegisterResponse)(nil), // 1: pbRegisterAuth.RegisterResponse
-	(*AuthRequest)(nil),      // 2: pbRegisterAuth.AuthRequest
-	(*AuthResponse)(nil),     // 3: pbRegisterAuth.AuthResponse
+	(*RegisterRequest)(nil),      // 0: pbRegisterAuth.RegisterRequest
+	(*RegisterResponse)(nil),     // 1: pbRegisterAuth.RegisterResponse
+	(*AuthRequest)(nil),          // 2: pbRegisterAuth.AuthRequest
+	(*AuthResponse)(nil),         // 3: pbRegisterAuth.AuthResponse
+	(*RegisterNodeRequest)(nil),  // 4: pbRegisterAuth.RegisterNodeRequest
+	(*RegisterNodeResponse)(nil), // 5: pbRegisterAuth.RegisterNodeResponse
 }
 var file_Broker_proto_pbRegisterAuth_proto_depIdxs = []int32{
 	0, // 0: pbRegisterAuth.RegisterAuth.Register:input_type -> pbRegisterAuth.RegisterRequest
 	2, // 1: pbRegisterAuth.RegisterAuth.Authenticate:input_type -> pbRegisterAuth.AuthRequest
-	1, // 2: pbRegisterAuth.RegisterAuth.Register:output_type -> pbRegisterAuth.RegisterResponse
-	3, // 3: pbRegisterAuth.RegisterAuth.Authenticate:output_type -> pbRegisterAuth.AuthResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: pbRegisterAuth.RegisterAuth.RegisterNode:input_type -> pbRegisterAuth.RegisterNodeRequest
+	4, // 3: pbRegisterAuth.RegisterAuth.RegisterBanco:input_type -> pbRegisterAuth.RegisterNodeRequest
+	1, // 4: pbRegisterAuth.RegisterAuth.Register:output_type -> pbRegisterAuth.RegisterResponse
+	3, // 5: pbRegisterAuth.RegisterAuth.Authenticate:output_type -> pbRegisterAuth.AuthResponse
+	5, // 6: pbRegisterAuth.RegisterAuth.RegisterNode:output_type -> pbRegisterAuth.RegisterNodeResponse
+	5, // 7: pbRegisterAuth.RegisterAuth.RegisterBanco:output_type -> pbRegisterAuth.RegisterNodeResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -306,14 +413,13 @@ func file_Broker_proto_pbRegisterAuth_proto_init() {
 	if File_Broker_proto_pbRegisterAuth_proto != nil {
 		return
 	}
-	file_Broker_proto_pbRegisterAuth_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbRegisterAuth_proto_rawDesc), len(file_Broker_proto_pbRegisterAuth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -10,11 +10,14 @@ service RegisterAuth {
     
     // Authenticate an existing consumer o producer
     rpc Authenticate (AuthRequest) returns (AuthResponse);
+
+    rpc RegisterNode (RegisterNodeRequest) returns (RegisterNodeResponse);
+    rpc RegisterBanco (RegisterNodeRequest) returns (RegisterNodeResponse);
 }
 
 message RegisterRequest {
     string username = 1;
-    string type = 2; // "consumer" o "producer"
+    string type = 2; // "consumer", "producer", "banco", "BD"
 }
 
 message RegisterResponse {
@@ -30,5 +33,15 @@ message AuthRequest {
 
 message AuthResponse {
     bool success = 1;
+    string message = 2;
+}
+
+message RegisterNodeRequest {
+    string uuid = 1;
+    string direction = 2;
+}
+
+message RegisterNodeResponse {
+    bool succes = 1;
     string message = 2;
 }
