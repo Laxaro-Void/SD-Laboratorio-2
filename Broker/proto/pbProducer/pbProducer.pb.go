@@ -101,6 +101,174 @@ func (x *IsAliveResponde) GetIsAlive() bool {
 	return false
 }
 
+type PublishEventRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Uuid             string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	EventoId         string                 `protobuf:"bytes,2,opt,name=evento_id,json=eventoId,proto3" json:"evento_id,omitempty"`
+	Discoteca        string                 `protobuf:"bytes,3,opt,name=discoteca,proto3" json:"discoteca,omitempty"`
+	NombreEvento     string                 `protobuf:"bytes,4,opt,name=nombre_evento,json=nombreEvento,proto3" json:"nombre_evento,omitempty"`
+	Categoria        string                 `protobuf:"bytes,5,opt,name=categoria,proto3" json:"categoria,omitempty"`
+	Comuna           string                 `protobuf:"bytes,6,opt,name=comuna,proto3" json:"comuna,omitempty"`
+	Precio           int32                  `protobuf:"varint,7,opt,name=precio,proto3" json:"precio,omitempty"`
+	Stock            int32                  `protobuf:"varint,8,opt,name=stock,proto3" json:"stock,omitempty"`
+	FechaEvento      string                 `protobuf:"bytes,9,opt,name=fecha_evento,json=fechaEvento,proto3" json:"fecha_evento,omitempty"`
+	FechaPublicacion string                 `protobuf:"bytes,10,opt,name=fecha_publicacion,json=fechaPublicacion,proto3" json:"fecha_publicacion,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *PublishEventRequest) Reset() {
+	*x = PublishEventRequest{}
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PublishEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublishEventRequest) ProtoMessage() {}
+
+func (x *PublishEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublishEventRequest.ProtoReflect.Descriptor instead.
+func (*PublishEventRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PublishEventRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetEventoId() string {
+	if x != nil {
+		return x.EventoId
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetDiscoteca() string {
+	if x != nil {
+		return x.Discoteca
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetNombreEvento() string {
+	if x != nil {
+		return x.NombreEvento
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetCategoria() string {
+	if x != nil {
+		return x.Categoria
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetComuna() string {
+	if x != nil {
+		return x.Comuna
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetPrecio() int32 {
+	if x != nil {
+		return x.Precio
+	}
+	return 0
+}
+
+func (x *PublishEventRequest) GetStock() int32 {
+	if x != nil {
+		return x.Stock
+	}
+	return 0
+}
+
+func (x *PublishEventRequest) GetFechaEvento() string {
+	if x != nil {
+		return x.FechaEvento
+	}
+	return ""
+}
+
+func (x *PublishEventRequest) GetFechaPublicacion() string {
+	if x != nil {
+		return x.FechaPublicacion
+	}
+	return ""
+}
+
+type PublishEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PublishEventResponse) Reset() {
+	*x = PublishEventResponse{}
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PublishEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublishEventResponse) ProtoMessage() {}
+
+func (x *PublishEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublishEventResponse.ProtoReflect.Descriptor instead.
+func (*PublishEventResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PublishEventResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *PublishEventResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_Broker_proto_pbProducer_proto protoreflect.FileDescriptor
 
 const file_Broker_proto_pbProducer_proto_rawDesc = "" +
@@ -109,9 +277,25 @@ const file_Broker_proto_pbProducer_proto_rawDesc = "" +
 	"pbProducer\"\a\n" +
 	"\x05Empty\"+\n" +
 	"\x0fIsAliveResponde\x12\x18\n" +
-	"\aisAlive\x18\x01 \x01(\bR\aisAlive2J\n" +
+	"\aisAlive\x18\x01 \x01(\bR\aisAlive\"\xbd\x02\n" +
+	"\x13PublishEventRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1b\n" +
+	"\tevento_id\x18\x02 \x01(\tR\beventoId\x12\x1c\n" +
+	"\tdiscoteca\x18\x03 \x01(\tR\tdiscoteca\x12#\n" +
+	"\rnombre_evento\x18\x04 \x01(\tR\fnombreEvento\x12\x1c\n" +
+	"\tcategoria\x18\x05 \x01(\tR\tcategoria\x12\x16\n" +
+	"\x06comuna\x18\x06 \x01(\tR\x06comuna\x12\x16\n" +
+	"\x06precio\x18\a \x01(\x05R\x06precio\x12\x14\n" +
+	"\x05stock\x18\b \x01(\x05R\x05stock\x12!\n" +
+	"\ffecha_evento\x18\t \x01(\tR\vfechaEvento\x12+\n" +
+	"\x11fecha_publicacion\x18\n" +
+	" \x01(\tR\x10fechaPublicacion\"J\n" +
+	"\x14PublishEventResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\x9d\x01\n" +
 	"\bProducer\x12>\n" +
-	"\fCheckIsAlive\x12\x11.pbProducer.Empty\x1a\x1b.pbProducer.IsAliveRespondeB\x0eZ\f./pbProducerb\x06proto3"
+	"\fCheckIsAlive\x12\x11.pbProducer.Empty\x1a\x1b.pbProducer.IsAliveResponde\x12Q\n" +
+	"\fPublishEvent\x12\x1f.pbProducer.PublishEventRequest\x1a .pbProducer.PublishEventResponseB\x0eZ\f./pbProducerb\x06proto3"
 
 var (
 	file_Broker_proto_pbProducer_proto_rawDescOnce sync.Once
@@ -125,16 +309,20 @@ func file_Broker_proto_pbProducer_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbProducer_proto_rawDescData
 }
 
-var file_Broker_proto_pbProducer_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_Broker_proto_pbProducer_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_Broker_proto_pbProducer_proto_goTypes = []any{
-	(*Empty)(nil),           // 0: pbProducer.Empty
-	(*IsAliveResponde)(nil), // 1: pbProducer.IsAliveResponde
+	(*Empty)(nil),                // 0: pbProducer.Empty
+	(*IsAliveResponde)(nil),      // 1: pbProducer.IsAliveResponde
+	(*PublishEventRequest)(nil),  // 2: pbProducer.PublishEventRequest
+	(*PublishEventResponse)(nil), // 3: pbProducer.PublishEventResponse
 }
 var file_Broker_proto_pbProducer_proto_depIdxs = []int32{
 	0, // 0: pbProducer.Producer.CheckIsAlive:input_type -> pbProducer.Empty
-	1, // 1: pbProducer.Producer.CheckIsAlive:output_type -> pbProducer.IsAliveResponde
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: pbProducer.Producer.PublishEvent:input_type -> pbProducer.PublishEventRequest
+	1, // 2: pbProducer.Producer.CheckIsAlive:output_type -> pbProducer.IsAliveResponde
+	3, // 3: pbProducer.Producer.PublishEvent:output_type -> pbProducer.PublishEventResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -151,7 +339,7 @@ func file_Broker_proto_pbProducer_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbProducer_proto_rawDesc), len(file_Broker_proto_pbProducer_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

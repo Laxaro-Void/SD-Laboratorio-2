@@ -4,27 +4,31 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"time"
+	"math/rand"
 
 	"encoding/json"
 
 	"google.golang.org/grpc"
 
+	pbProducer "Productor/proto/pbProducer"
 	pbRegisterAuth "Productor/proto/pbRegisterAuth"
 )
 
 type Producer struct {
 	BrokerConnection *grpc.ClientConn
 	RegisterAuthClient pbRegisterAuth.RegisterAuthClient
+	ProducerClient pbProducer.ProducerClient
 
 	KeyPath string
 	InputPath string
 
 	eventosProgramados map[string]Event
 	eventosPublicados  map[string]Event
+
+	Uuid string
 }
 
 func (c *Producer) SaveUUID(uuid string) {
@@ -117,6 +121,7 @@ func (c *Producer) LoginSession() bool {
 		return true
 	}
 
+	c.Uuid = key
 	return c.Authenciate(os.Getenv("NAME"), key)
 }
 
@@ -129,15 +134,15 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 }
 
 type Event struct {
-	evento_id string
-	discoteca string
-	nombre_evento string
-	categoria string
-	comuna string
-	precio int
-	stock int
-	fecha_evento time.Time
-	fecha_publicacion time.Time
+	Evento_id string
+	Discoteca string
+	Nombre_evento string
+	Categoria string
+	Comuna string
+	Precio int
+	Stock int
+	Fecha_evento string
+	Fecha_publicacion string
 }
 
 func (c *Producer) ReadInput() {
@@ -148,20 +153,81 @@ func (c *Producer) ReadInput() {
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	for {
-		var item Event
-		if err := decoder.Decode(&item); err != nil {
-			if err == io.EOF {
-				break
-			}
-			log.Fatalf("Faild to decode item: %v", err)
-		}
 
-		if item.discoteca != os.Getenv("NAME") {
+	// Read '['
+	_, err = decoder.Token()
+	if err != nil {
+		log.Fatalf("Failed to read json: %v", err)
+	}
+
+	for decoder.More() {
+		var item Event
+		err := decoder.Decode(&item)
+		if err != nil {
+			log.Fatalf("Failed to decode json: %v", err)
+		}
+		if item.Discoteca != os.Getenv("NAME") {
 			continue
 		}
 		log.Printf("Read Event: %+v", item)
-		c.eventosProgramados[item.evento_id] = item
+		c.eventosProgramados[item.Evento_id] = item
+	}
+
+	// Read ']'
+	_, err = decoder.Token()
+	if err != nil {
+		log.Fatalf("Failed to read json: %v", err)
+	}
+}
+
+func (c *Producer) PublishEvent(eventId string) bool {
+	event, exists := c.eventosProgramados[eventId]
+	if !exists {
+		log.Printf("Event with ID %s not found", eventId)
+		return false
+	}
+
+	res, err := c.ProducerClient.PublishEvent(context.Background(), &pbProducer.PublishEventRequest{
+		Uuid: c.Uuid,
+		EventoId: event.Evento_id,
+		Discoteca: event.Discoteca,
+		NombreEvento: event.Nombre_evento,
+		Categoria: event.Categoria,
+		Comuna: event.Comuna,
+		Precio: int32(event.Precio),
+		Stock: int32(event.Stock),
+		FechaEvento: event.Fecha_evento,
+		FechaPublicacion: event.Fecha_publicacion,
+	})
+	if err != nil {
+		log.Printf("Failed to publish event %s: %v", eventId, err)
+		return false
+	}
+
+	if !res.Success {
+		log.Printf("Failed to publish event %s: %s", eventId, res.Message)
+		return false
+	}
+
+	c.eventosPublicados[eventId] = event
+	delete(c.eventosProgramados, eventId)
+
+	log.Printf("Published Event: %+v", event)
+	return true
+}
+
+func (c *Producer) PublishAllEvents() {
+	for {
+		for key := range c.eventosProgramados {
+			if c.PublishEvent(key) {
+				log.Printf("Event %s published successfully", key)
+			} else {
+				log.Printf("Failed to publish event %s", key)
+			}
+			break
+		}
+
+		time.Sleep(time.Duration(30.0+10.0*rand.Float32()) * time.Second)
 	}
 }
 
@@ -172,7 +238,7 @@ func initProducer() {
 	producer := &Producer{
 		BrokerConnection: BrokerConnection,
 		RegisterAuthClient: pbRegisterAuth.NewRegisterAuthClient(BrokerConnection),
-
+		ProducerClient: pbProducer.NewProducerClient(BrokerConnection),
 		KeyPath: "keys/" + os.Getenv("NAME") + "-key.txt",
 		InputPath: "input/" + os.Getenv("INPUT_FILE"),
 
@@ -182,6 +248,11 @@ func initProducer() {
 
 	producer.LoginSession()
 	producer.ReadInput()
+	go producer.PublishAllEvents()
+
+	forever := make(chan bool)
+	log.Printf("Sending events. To exit press CTRL+C")
+	<-forever
 }
 
 func main() {
