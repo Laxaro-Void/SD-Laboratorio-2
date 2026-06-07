@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.34.1
-// source: Broker/proto/pbConsumer.proto
+// source: Consumidor/proto/pbConsumer.proto
 
 package pbConsumer
 
@@ -30,7 +30,7 @@ type GetEventsRequest struct {
 
 func (x *GetEventsRequest) Reset() {
 	*x = GetEventsRequest{}
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[0]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *GetEventsRequest) String() string {
 func (*GetEventsRequest) ProtoMessage() {}
 
 func (x *GetEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[0]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *GetEventsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEventsRequest.ProtoReflect.Descriptor instead.
 func (*GetEventsRequest) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{0}
+	return file_Consumidor_proto_pbConsumer_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GetEventsRequest) GetUuid() string {
@@ -81,7 +81,7 @@ type Events struct {
 
 func (x *Events) Reset() {
 	*x = Events{}
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[1]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -93,7 +93,7 @@ func (x *Events) String() string {
 func (*Events) ProtoMessage() {}
 
 func (x *Events) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[1]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -106,7 +106,7 @@ func (x *Events) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Events.ProtoReflect.Descriptor instead.
 func (*Events) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{1}
+	return file_Consumidor_proto_pbConsumer_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Events) GetEventID() string {
@@ -176,7 +176,7 @@ type GetEventsResponse struct {
 
 func (x *GetEventsResponse) Reset() {
 	*x = GetEventsResponse{}
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[2]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -188,7 +188,7 @@ func (x *GetEventsResponse) String() string {
 func (*GetEventsResponse) ProtoMessage() {}
 
 func (x *GetEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[2]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +201,7 @@ func (x *GetEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEventsResponse.ProtoReflect.Descriptor instead.
 func (*GetEventsResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{2}
+	return file_Consumidor_proto_pbConsumer_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetEventsResponse) GetSucces() bool {
@@ -237,7 +237,7 @@ type PurchaseEventRequest struct {
 
 func (x *PurchaseEventRequest) Reset() {
 	*x = PurchaseEventRequest{}
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[3]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -249,7 +249,7 @@ func (x *PurchaseEventRequest) String() string {
 func (*PurchaseEventRequest) ProtoMessage() {}
 
 func (x *PurchaseEventRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[3]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -262,7 +262,7 @@ func (x *PurchaseEventRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PurchaseEventRequest.ProtoReflect.Descriptor instead.
 func (*PurchaseEventRequest) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{3}
+	return file_Consumidor_proto_pbConsumer_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PurchaseEventRequest) GetUuid() string {
@@ -304,7 +304,7 @@ type PurchaseEventResponse struct {
 
 func (x *PurchaseEventResponse) Reset() {
 	*x = PurchaseEventResponse{}
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[4]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -316,7 +316,7 @@ func (x *PurchaseEventResponse) String() string {
 func (*PurchaseEventResponse) ProtoMessage() {}
 
 func (x *PurchaseEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[4]
+	mi := &file_Consumidor_proto_pbConsumer_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -329,7 +329,7 @@ func (x *PurchaseEventResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PurchaseEventResponse.ProtoReflect.Descriptor instead.
 func (*PurchaseEventResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{4}
+	return file_Consumidor_proto_pbConsumer_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PurchaseEventResponse) GetSucces() bool {
@@ -353,11 +353,11 @@ func (x *PurchaseEventResponse) GetTicketID() string {
 	return ""
 }
 
-var File_Broker_proto_pbConsumer_proto protoreflect.FileDescriptor
+var File_Consumidor_proto_pbConsumer_proto protoreflect.FileDescriptor
 
-const file_Broker_proto_pbConsumer_proto_rawDesc = "" +
+const file_Consumidor_proto_pbConsumer_proto_rawDesc = "" +
 	"\n" +
-	"\x1dBroker/proto/pbConsumer.proto\x12\n" +
+	"!Consumidor/proto/pbConsumer.proto\x12\n" +
 	"pbConsumer\"&\n" +
 	"\x10GetEventsRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"\xea\x01\n" +
@@ -388,26 +388,26 @@ const file_Broker_proto_pbConsumer_proto_rawDesc = "" +
 	"\rPurchaseEvent\x12 .pbConsumer.PurchaseEventRequest\x1a!.pbConsumer.PurchaseEventResponseB\x0eZ\f./pbConsumerb\x06proto3"
 
 var (
-	file_Broker_proto_pbConsumer_proto_rawDescOnce sync.Once
-	file_Broker_proto_pbConsumer_proto_rawDescData []byte
+	file_Consumidor_proto_pbConsumer_proto_rawDescOnce sync.Once
+	file_Consumidor_proto_pbConsumer_proto_rawDescData []byte
 )
 
-func file_Broker_proto_pbConsumer_proto_rawDescGZIP() []byte {
-	file_Broker_proto_pbConsumer_proto_rawDescOnce.Do(func() {
-		file_Broker_proto_pbConsumer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_Broker_proto_pbConsumer_proto_rawDesc), len(file_Broker_proto_pbConsumer_proto_rawDesc)))
+func file_Consumidor_proto_pbConsumer_proto_rawDescGZIP() []byte {
+	file_Consumidor_proto_pbConsumer_proto_rawDescOnce.Do(func() {
+		file_Consumidor_proto_pbConsumer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_Consumidor_proto_pbConsumer_proto_rawDesc), len(file_Consumidor_proto_pbConsumer_proto_rawDesc)))
 	})
-	return file_Broker_proto_pbConsumer_proto_rawDescData
+	return file_Consumidor_proto_pbConsumer_proto_rawDescData
 }
 
-var file_Broker_proto_pbConsumer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_Broker_proto_pbConsumer_proto_goTypes = []any{
+var file_Consumidor_proto_pbConsumer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_Consumidor_proto_pbConsumer_proto_goTypes = []any{
 	(*GetEventsRequest)(nil),      // 0: pbConsumer.GetEventsRequest
 	(*Events)(nil),                // 1: pbConsumer.Events
 	(*GetEventsResponse)(nil),     // 2: pbConsumer.GetEventsResponse
 	(*PurchaseEventRequest)(nil),  // 3: pbConsumer.PurchaseEventRequest
 	(*PurchaseEventResponse)(nil), // 4: pbConsumer.PurchaseEventResponse
 }
-var file_Broker_proto_pbConsumer_proto_depIdxs = []int32{
+var file_Consumidor_proto_pbConsumer_proto_depIdxs = []int32{
 	1, // 0: pbConsumer.GetEventsResponse.events:type_name -> pbConsumer.Events
 	0, // 1: pbConsumer.Consumer.GetEvents:input_type -> pbConsumer.GetEventsRequest
 	3, // 2: pbConsumer.Consumer.PurchaseEvent:input_type -> pbConsumer.PurchaseEventRequest
@@ -420,26 +420,26 @@ var file_Broker_proto_pbConsumer_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_Broker_proto_pbConsumer_proto_init() }
-func file_Broker_proto_pbConsumer_proto_init() {
-	if File_Broker_proto_pbConsumer_proto != nil {
+func init() { file_Consumidor_proto_pbConsumer_proto_init() }
+func file_Consumidor_proto_pbConsumer_proto_init() {
+	if File_Consumidor_proto_pbConsumer_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbConsumer_proto_rawDesc), len(file_Broker_proto_pbConsumer_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Consumidor_proto_pbConsumer_proto_rawDesc), len(file_Consumidor_proto_pbConsumer_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_Broker_proto_pbConsumer_proto_goTypes,
-		DependencyIndexes: file_Broker_proto_pbConsumer_proto_depIdxs,
-		MessageInfos:      file_Broker_proto_pbConsumer_proto_msgTypes,
+		GoTypes:           file_Consumidor_proto_pbConsumer_proto_goTypes,
+		DependencyIndexes: file_Consumidor_proto_pbConsumer_proto_depIdxs,
+		MessageInfos:      file_Consumidor_proto_pbConsumer_proto_msgTypes,
 	}.Build()
-	File_Broker_proto_pbConsumer_proto = out.File
-	file_Broker_proto_pbConsumer_proto_goTypes = nil
-	file_Broker_proto_pbConsumer_proto_depIdxs = nil
+	File_Consumidor_proto_pbConsumer_proto = out.File
+	file_Consumidor_proto_pbConsumer_proto_goTypes = nil
+	file_Consumidor_proto_pbConsumer_proto_depIdxs = nil
 }

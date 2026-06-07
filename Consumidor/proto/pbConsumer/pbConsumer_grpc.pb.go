@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.1
-// source: Broker/proto/pbConsumer.proto
+// source: Consumidor/proto/pbConsumer.proto
 
 package pbConsumer
 
@@ -159,5 +159,5 @@ var Consumer_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "Broker/proto/pbConsumer.proto",
+	Metadata: "Consumidor/proto/pbConsumer.proto",
 }

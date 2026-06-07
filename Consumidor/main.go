@@ -10,13 +10,18 @@ import (
 	"google.golang.org/grpc"
 
 	pbRegisterAuth "Consumidor/proto/pbRegisterAuth"
+	pbConsumer "Consumidor/proto/pbConsumer"
 )
 
 type Consumer struct {
 	BrokerConnection *grpc.ClientConn
 	RegisterAuthClient pbRegisterAuth.RegisterAuthClient
+	ConsumerClient pbConsumer.ConsumerClient
 
 	KeyPath string
+	Uuid string
+
+	eventosDisponibles map[string]Event
 }
 
 func (c *Consumer) SaveUUID(uuid string) {
@@ -107,6 +112,7 @@ func (c *Consumer) LoginSession() bool {
 		return true
 	}
 
+	c.Uuid = key
 	return c.Authenciate(os.Getenv("NAME"), key)
 }
 
@@ -118,6 +124,39 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 	return conn
 }
 
+type Event struct {
+	Evento_id string
+	Discoteca string
+	Nombre_evento string
+	Categoria string
+	Comuna string
+	Precio int
+	Stock int
+	Fecha_evento string
+	Fecha_publicacion string
+}
+
+func (c *Consumer) GetEvents() {
+	response, err := c.ConsumerClient.GetEvents(context.Background(), &pbConsumer.GetEventsRequest{
+		Uuid: c.Uuid,
+	})
+	if err != nil {
+		log.Printf("Error getting events: %v", err)
+		return
+	}
+
+	if !response.Succes {
+		log.Printf("Failed to get events: %s", response.Message)
+		return
+	}
+
+	log.Printf("Received %d events", len(response.Events))
+	for _, event := range response.Events {
+		log.Printf("Event ID: %s, Name: %s, Price: %d", event.EventID, event.NombreEvento, event.Precio)
+	}
+
+}
+
 func initConsumer() {
 	BrokerConnection := NewGRPCClient(os.Getenv("BROKER_URL"))
 	defer BrokerConnection.Close()
@@ -125,10 +164,12 @@ func initConsumer() {
 	consumer := &Consumer{
 		BrokerConnection: BrokerConnection,
 		RegisterAuthClient: pbRegisterAuth.NewRegisterAuthClient(BrokerConnection),
+		ConsumerClient: pbConsumer.NewConsumerClient(BrokerConnection),
 		KeyPath: "keys/" + os.Getenv("NAME") + "-key.txt",
 	}
 
 	consumer.LoginSession()
+
 }
 
 func main() {

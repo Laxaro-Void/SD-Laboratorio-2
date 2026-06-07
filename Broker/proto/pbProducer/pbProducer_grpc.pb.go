@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Producer_CheckIsAlive_FullMethodName = "/pbProducer.Producer/CheckIsAlive"
 	Producer_PublishEvent_FullMethodName = "/pbProducer.Producer/PublishEvent"
 )
 
@@ -29,7 +28,6 @@ const (
 //
 // Service for Register and Authentication of Consumers, Productors
 type ProducerClient interface {
-	CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error)
 	PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*PublishEventResponse, error)
 }
 
@@ -39,16 +37,6 @@ type producerClient struct {
 
 func NewProducerClient(cc grpc.ClientConnInterface) ProducerClient {
 	return &producerClient{cc}
-}
-
-func (c *producerClient) CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(IsAliveResponde)
-	err := c.cc.Invoke(ctx, Producer_CheckIsAlive_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *producerClient) PublishEvent(ctx context.Context, in *PublishEventRequest, opts ...grpc.CallOption) (*PublishEventResponse, error) {
@@ -67,7 +55,6 @@ func (c *producerClient) PublishEvent(ctx context.Context, in *PublishEventReque
 //
 // Service for Register and Authentication of Consumers, Productors
 type ProducerServer interface {
-	CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error)
 	PublishEvent(context.Context, *PublishEventRequest) (*PublishEventResponse, error)
 	mustEmbedUnimplementedProducerServer()
 }
@@ -79,9 +66,6 @@ type ProducerServer interface {
 // pointer dereference when methods are called.
 type UnimplementedProducerServer struct{}
 
-func (UnimplementedProducerServer) CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error) {
-	return nil, status.Error(codes.Unimplemented, "method CheckIsAlive not implemented")
-}
 func (UnimplementedProducerServer) PublishEvent(context.Context, *PublishEventRequest) (*PublishEventResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PublishEvent not implemented")
 }
@@ -104,24 +88,6 @@ func RegisterProducerServer(s grpc.ServiceRegistrar, srv ProducerServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Producer_ServiceDesc, srv)
-}
-
-func _Producer_CheckIsAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProducerServer).CheckIsAlive(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Producer_CheckIsAlive_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProducerServer).CheckIsAlive(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Producer_PublishEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -149,10 +115,6 @@ var Producer_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pbProducer.Producer",
 	HandlerType: (*ProducerServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CheckIsAlive",
-			Handler:    _Producer_CheckIsAlive_Handler,
-		},
 		{
 			MethodName: "PublishEvent",
 			Handler:    _Producer_PublishEvent_Handler,

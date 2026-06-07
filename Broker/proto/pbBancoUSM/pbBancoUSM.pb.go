@@ -21,26 +21,29 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Empty struct {
+type PaymentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Amount        int32                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	PaymentMethod string                 `protobuf:"bytes,3,opt,name=paymentMethod,proto3" json:"paymentMethod,omitempty"` // e.g. "debito", "credito"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Empty) Reset() {
-	*x = Empty{}
+func (x *PaymentRequest) Reset() {
+	*x = PaymentRequest{}
 	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Empty) String() string {
+func (x *PaymentRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Empty) ProtoMessage() {}
+func (*PaymentRequest) ProtoMessage() {}
 
-func (x *Empty) ProtoReflect() protoreflect.Message {
+func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -52,32 +55,54 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
-func (*Empty) Descriptor() ([]byte, []int) {
+// Deprecated: Use PaymentRequest.ProtoReflect.Descriptor instead.
+func (*PaymentRequest) Descriptor() ([]byte, []int) {
 	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{0}
 }
 
-type IsAliveResponde struct {
+func (x *PaymentRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *PaymentRequest) GetAmount() int32 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *PaymentRequest) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+type PaymentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	IsAlive       bool                   `protobuf:"varint,1,opt,name=isAlive,proto3" json:"isAlive,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *IsAliveResponde) Reset() {
-	*x = IsAliveResponde{}
+func (x *PaymentResponse) Reset() {
+	*x = PaymentResponse{}
 	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *IsAliveResponde) String() string {
+func (x *PaymentResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*IsAliveResponde) ProtoMessage() {}
+func (*PaymentResponse) ProtoMessage() {}
 
-func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
+func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -89,16 +114,23 @@ func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IsAliveResponde.ProtoReflect.Descriptor instead.
-func (*IsAliveResponde) Descriptor() ([]byte, []int) {
+// Deprecated: Use PaymentResponse.ProtoReflect.Descriptor instead.
+func (*PaymentResponse) Descriptor() ([]byte, []int) {
 	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *IsAliveResponde) GetIsAlive() bool {
+func (x *PaymentResponse) GetSuccess() bool {
 	if x != nil {
-		return x.IsAlive
+		return x.Success
 	}
 	return false
+}
+
+func (x *PaymentResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
 }
 
 var File_Broker_proto_pbBancoUSM_proto protoreflect.FileDescriptor
@@ -106,12 +138,16 @@ var File_Broker_proto_pbBancoUSM_proto protoreflect.FileDescriptor
 const file_Broker_proto_pbBancoUSM_proto_rawDesc = "" +
 	"\n" +
 	"\x1dBroker/proto/pbBancoUSM.proto\x12\n" +
-	"pbBancoUSM\"\a\n" +
-	"\x05Empty\"+\n" +
-	"\x0fIsAliveResponde\x12\x18\n" +
-	"\aisAlive\x18\x01 \x01(\bR\aisAlive2J\n" +
-	"\bBancoUSM\x12>\n" +
-	"\fCheckIsAlive\x12\x11.pbBancoUSM.Empty\x1a\x1b.pbBancoUSM.IsAliveRespondeB\x0eZ\f./pbBancoUSMb\x06proto3"
+	"pbBancoUSM\"b\n" +
+	"\x0ePaymentRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x05R\x06amount\x12$\n" +
+	"\rpaymentMethod\x18\x03 \x01(\tR\rpaymentMethod\"E\n" +
+	"\x0fPaymentResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2U\n" +
+	"\bBancoUSM\x12I\n" +
+	"\x0eProcessPayment\x12\x1a.pbBancoUSM.PaymentRequest\x1a\x1b.pbBancoUSM.PaymentResponseB\x0eZ\f./pbBancoUSMb\x06proto3"
 
 var (
 	file_Broker_proto_pbBancoUSM_proto_rawDescOnce sync.Once
@@ -127,12 +163,12 @@ func file_Broker_proto_pbBancoUSM_proto_rawDescGZIP() []byte {
 
 var file_Broker_proto_pbBancoUSM_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_Broker_proto_pbBancoUSM_proto_goTypes = []any{
-	(*Empty)(nil),           // 0: pbBancoUSM.Empty
-	(*IsAliveResponde)(nil), // 1: pbBancoUSM.IsAliveResponde
+	(*PaymentRequest)(nil),  // 0: pbBancoUSM.PaymentRequest
+	(*PaymentResponse)(nil), // 1: pbBancoUSM.PaymentResponse
 }
 var file_Broker_proto_pbBancoUSM_proto_depIdxs = []int32{
-	0, // 0: pbBancoUSM.BancoUSM.CheckIsAlive:input_type -> pbBancoUSM.Empty
-	1, // 1: pbBancoUSM.BancoUSM.CheckIsAlive:output_type -> pbBancoUSM.IsAliveResponde
+	0, // 0: pbBancoUSM.BancoUSM.ProcessPayment:input_type -> pbBancoUSM.PaymentRequest
+	1, // 1: pbBancoUSM.BancoUSM.ProcessPayment:output_type -> pbBancoUSM.PaymentResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

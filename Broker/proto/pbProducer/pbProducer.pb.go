@@ -292,9 +292,8 @@ const file_Broker_proto_pbProducer_proto_rawDesc = "" +
 	" \x01(\tR\x10fechaPublicacion\"J\n" +
 	"\x14PublishEventResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\x9d\x01\n" +
-	"\bProducer\x12>\n" +
-	"\fCheckIsAlive\x12\x11.pbProducer.Empty\x1a\x1b.pbProducer.IsAliveResponde\x12Q\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2]\n" +
+	"\bProducer\x12Q\n" +
 	"\fPublishEvent\x12\x1f.pbProducer.PublishEventRequest\x1a .pbProducer.PublishEventResponseB\x0eZ\f./pbProducerb\x06proto3"
 
 var (
@@ -317,12 +316,10 @@ var file_Broker_proto_pbProducer_proto_goTypes = []any{
 	(*PublishEventResponse)(nil), // 3: pbProducer.PublishEventResponse
 }
 var file_Broker_proto_pbProducer_proto_depIdxs = []int32{
-	0, // 0: pbProducer.Producer.CheckIsAlive:input_type -> pbProducer.Empty
-	2, // 1: pbProducer.Producer.PublishEvent:input_type -> pbProducer.PublishEventRequest
-	1, // 2: pbProducer.Producer.CheckIsAlive:output_type -> pbProducer.IsAliveResponde
-	3, // 3: pbProducer.Producer.PublishEvent:output_type -> pbProducer.PublishEventResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	2, // 0: pbProducer.Producer.PublishEvent:input_type -> pbProducer.PublishEventRequest
+	3, // 1: pbProducer.Producer.PublishEvent:output_type -> pbProducer.PublishEventResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
