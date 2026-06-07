@@ -133,6 +133,28 @@ func (s *BancoUSM) Connect(direction string) bool {
 	return true
 }
 
+func (s *BancoUSM) ProcessPayment(uuid string, amount int32, paymentMethod string) (bool, string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.state != "Connected" {
+		log.Println("Not connected to BancoUSM")
+		return false, "Not connected to BancoUSM", nil
+	}
+
+	response, err := s.client.ProcessPayment(context.Background(), &pbBancoUSM.PaymentRequest{
+		Uuid: uuid,
+		Amount: amount,
+		PaymentMethod: paymentMethod,
+	})
+	if err != nil {
+		log.Printf("Error processing payment: %v", err)
+		return false, "Error processing payment", err
+	}
+
+	return response.Success, response.Message, err
+}
+
 func NewGRPCClient(address string) *grpc.ClientConn {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {

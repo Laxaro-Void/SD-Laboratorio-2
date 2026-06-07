@@ -5,7 +5,6 @@ package pbProducer;
 
 // Service for Register and Authentication of Consumers, Productors
 service Producer {
-    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
     rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse);
 }
 

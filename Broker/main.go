@@ -9,20 +9,21 @@ import (
 
 	"google.golang.org/grpc"
 
+	dsConextionManager "Broker/dsConexionManager"
 	dsRegisterMap "Broker/dsRegisterMap"
 	dsUUID "Broker/dsUUID"
-	dsConextionManager "Broker/dsConexionManager"
 	pbRegisterAuth "Broker/proto/pbRegisterAuth"
-	pbConsumer "Broker/proto/pbConsumer"
 	pbProducer "Broker/proto/pbProducer"
+	pbConsumer "Broker/proto/pbConsumer"
+	pbBancoUSM "Broker/proto/pbBancoUSM"
 )
 
 type Broker struct {
 	// Registered users and productors
-	trustedConexions *dsRegisterMap.RegisterMap
+	trustedConexions       *dsRegisterMap.RegisterMap
 	authenticatedConexions *dsRegisterMap.RegisterMap
 
-	bancoUSM  *dsConextionManager.BancoUSM
+	bancoUSM       *dsConextionManager.BancoUSM
 	dynamoDBClient *dsConextionManager.DynamoDB
 }
 
@@ -42,14 +43,14 @@ type ProducerServer struct {
 }
 
 type Event struct {
-	Evento_id string
-	Discoteca string
-	Nombre_evento string
-	Categoria string
-	Comuna string
-	Precio int
-	Stock int
-	Fecha_evento string
+	Evento_id         string
+	Discoteca         string
+	Nombre_evento     string
+	Categoria         string
+	Comuna            string
+	Precio            int
+	Stock             int
+	Fecha_evento      string
 	Fecha_publicacion string
 }
 
@@ -57,7 +58,7 @@ type Event struct {
 Registra una nueva conexion al servidor
 */
 func (s *RegisterAuthServer) Register(ctx context.Context, req *pbRegisterAuth.RegisterRequest) (*pbRegisterAuth.RegisterResponse, error) {
-	if (req.Type != "consumer" && req.Type != "producer" && req.Type != "banco" && req.Type != "DB") {
+	if req.Type != "consumer" && req.Type != "producer" && req.Type != "banco" && req.Type != "DB" {
 		log.Println("Invalid type. Must be 'consumer' or 'producer'")
 		return &pbRegisterAuth.RegisterResponse{
 			Success: false,
@@ -113,7 +114,7 @@ func (s *RegisterAuthServer) RegisterNode(ctx context.Context, req *pbRegisterAu
 	if !s.broker.trustedConexions.Exists(req.Uuid) {
 		log.Println("Recive a Untrusted Node Request")
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "403 forbidden",
 		}, nil
 	}
@@ -121,20 +122,20 @@ func (s *RegisterAuthServer) RegisterNode(ctx context.Context, req *pbRegisterAu
 	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
 		log.Println("Recive a not authenticated Node Request")
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "403 forbidden",
 		}, nil
 	}
 
 	if !s.broker.dynamoDBClient.AddConection(req.Direction) {
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "Fail to create Conection",
 		}, nil
 	}
 
 	return &pbRegisterAuth.RegisterNodeResponse{
-		Succes: true,
+		Succes:  true,
 		Message: "Conection Stable",
 	}, nil
 }
@@ -143,7 +144,7 @@ func (s *RegisterAuthServer) RegisterBanco(ctx context.Context, req *pbRegisterA
 	if !s.broker.trustedConexions.Exists(req.Uuid) {
 		log.Println("Recive a Untrusted Node Request")
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "403 forbidden",
 		}, nil
 	}
@@ -151,20 +152,20 @@ func (s *RegisterAuthServer) RegisterBanco(ctx context.Context, req *pbRegisterA
 	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
 		log.Println("Recive a not authenticated Node Request")
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "403 forbidden",
 		}, nil
 	}
 
 	if !s.broker.bancoUSM.Connect(req.Direction) {
 		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes: false,
+			Succes:  false,
 			Message: "Fail to create Conection",
 		}, nil
 	}
 
 	return &pbRegisterAuth.RegisterNodeResponse{
-		Succes: true,
+		Succes:  true,
 		Message: "Conection Stable",
 	}, nil
 
@@ -199,7 +200,7 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	event.Fecha_publicacion = time.Now().Format(time.RFC3339)
 
 	// Validación
-	if event.Precio <= 0 && event.Stock <= 0 {
+	if event.Precio <= 0 || event.Stock <= 0 {
 		return &pbProducer.PublishEventResponse{
 			Success: false,
 			Message: "Invalid event data",
@@ -207,6 +208,7 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	}
 
 	// Publish event to DynamoDB
+	// TODO: Check is evento_id is unique.
 	log.Printf("Publishing Event %s to DynamoDB", event.Evento_id)
 
 	return &pbProducer.PublishEventResponse{
@@ -215,8 +217,95 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	}, nil
 }
 
-func ValidateEvent() {
+func (s *ConsumerServer) GetEvents(ctx context.Context, req *pbConsumer.GetEventsRequest) (*pbConsumer.GetEventsResponse, error) {
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
+		log.Println("Recive a Untrusted Node Request")
+		return &pbConsumer.GetEventsResponse{
+			Succes:  false,
+			Message: "403 forbidden",
+		}, nil
+	}
 
+	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
+		log.Println("Recive a not authenticated Node Request")
+		return &pbConsumer.GetEventsResponse{
+			Succes:  false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	// Get events from DynamoDB
+	log.Print("Geting all events from DynamoDB :(")
+
+	return &pbConsumer.GetEventsResponse{
+		Succes:  true,
+		Message: "Events retrieved successfully",
+		Events: []*pbConsumer.Events{
+			{
+				EventID:      "1",
+				Discoteca:    "Discoteca A",
+				NombreEvento: "Evento A",
+				Categoria:    "Categoria A",
+				Comuna:       "Comuna A",
+				Precio:       10000,
+				Stock:        100,
+				FechaEvento:  time.Now().Format(time.RFC3339),
+			},
+		},
+	}, nil
+}
+
+func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.PurchaseEventRequest) (*pbConsumer.PurchaseEventResponse, error) {
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
+		log.Println("Recive a Untrusted Node Request")
+		return &pbConsumer.PurchaseEventResponse{
+			Succes:  false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
+		log.Println("Recive a not authenticated Node Request")
+		return &pbConsumer.PurchaseEventResponse{
+			Succes:  false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	// TODO: Get Event from DynamoDB and check if it exists and if there is stock available.
+
+	log.Printf("Processing payment for Event %s", req.EventID)
+	success, response, err := s.broker.bancoUSM.ProcessPayment(
+		req.Uuid,
+		5000, // TODO: Get price from event
+		req.PaymentMethod,
+	)
+
+	if err != nil {
+		log.Printf("Error processing payment: %v", err)
+		return &pbConsumer.PurchaseEventResponse{
+			Succes:  false,
+			Message: "Payment processing failed",
+		}, nil
+	}
+
+	if !success {
+		log.Printf("Payment failed: %s", response)
+		return &pbConsumer.PurchaseEventResponse{
+			Succes:  false,
+			Message: "Payment failed: " + response,
+		}, nil
+	}
+
+	// TODO: Add unique ticket id
+	ticket := "unique"
+
+	log.Printf("Payment successful for Event %s", req.EventID)
+	return &pbConsumer.PurchaseEventResponse{
+		Succes:  true,
+		Message: "Purchase successful",
+		TicketID:   ticket,
+	}, nil
 }
 
 func TicketsGenerator() {
@@ -231,29 +320,24 @@ func DataRestore() {
 
 }
 
-func StartRegisterAuthServer(listener net.Listener, broker *Broker) {
-	RegisterAuthServer := &RegisterAuthServer{
-		broker: broker,
+func StartServers(broker *Broker) {
+	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	pbRegisterAuth.RegisterRegisterAuthServer(grpcServer, RegisterAuthServer)
-
-	log.Printf("RegisterAuthServer is listening on %s", listener.Addr().String())
-	if err := grpcServer.Serve(listener); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
-	}
-}
-
-func StartProducerServer(listener net.Listener, broker *Broker) {
-	ProducerServer := &ProducerServer{
+	pbRegisterAuth.RegisterRegisterAuthServer(grpcServer, &RegisterAuthServer{
 		broker: broker,
-	}
+	})
+	pbProducer.RegisterProducerServer(grpcServer, &ProducerServer{
+		broker: broker,
+	})
+	pbConsumer.RegisterConsumerServer(grpcServer, &ConsumerServer{
+		broker: broker,
+	})
 
-	grpcServer := grpc.NewServer()
-	pbProducer.RegisterProducerServer(grpcServer, ProducerServer)
-
-	log.Printf("ProducerServer is listening on %s", listener.Addr().String())
+	log.Printf("Servers is listening on %s", listener.Addr().String())
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
@@ -261,10 +345,10 @@ func StartProducerServer(listener net.Listener, broker *Broker) {
 
 func serverBackground() {
 	broker := &Broker{
-		trustedConexions:      dsRegisterMap.NewRegisterMap(),
-		authenticatedConexions:   dsRegisterMap.NewRegisterMap(),
-		
-		bancoUSM: new(dsConextionManager.BancoUSM),
+		trustedConexions:       dsRegisterMap.NewRegisterMap(),
+		authenticatedConexions: dsRegisterMap.NewRegisterMap(),
+
+		bancoUSM:       new(dsConextionManager.BancoUSM),
 		dynamoDBClient: new(dsConextionManager.DynamoDB),
 	}
 
@@ -273,13 +357,7 @@ func serverBackground() {
 	broker.dynamoDBClient.W = 2
 	broker.dynamoDBClient.Nodes = make(map[string]dsConextionManager.Node)
 
-	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
-
-	go StartRegisterAuthServer(listener, broker)
-	go StartProducerServer(listener, broker)
+	go StartServers(broker)
 
 	forever := make(chan bool)
 	log.Printf("Waiting for messages. To exit press CTRL+C")
@@ -290,7 +368,7 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to connect to %s: %v", address, err)
-	} 
+	}
 	return conn
 }
 

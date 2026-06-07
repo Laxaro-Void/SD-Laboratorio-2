@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"time"
@@ -147,6 +148,44 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 		log.Fatalf("Failed to connect to broker: %v", err)
 	}
 	return conn
+}
+
+func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.PaymentRequest) (*pbBancoUSM.PaymentResponse, error) {
+	if req.Amount <= 0 {
+		return &pbBancoUSM.PaymentResponse{
+			Success: false,
+			Message: "Invalid payment amount",
+		}, nil
+	}
+
+	if req.PaymentMethod != "debito" && req.PaymentMethod != "credito" {
+		return &pbBancoUSM.PaymentResponse{
+			Success: false,
+			Message: "Invalid payment method",
+		}, nil
+	}
+
+	var p float32;
+	if req.PaymentMethod == "credito" {
+		p = 0.9;
+	}
+	if req.PaymentMethod == "debito" {
+		p = 0.8;
+	}
+
+	if rand.Float32() > p {
+		log.Printf("ID: %s, Amount: %q, Method: %s, Result: Fail\n", req.Uuid, req.Amount, req.PaymentMethod)
+		return &pbBancoUSM.PaymentResponse{
+			Success: false,
+			Message: "Payment failed due to insufficient funds or other issues",
+		}, nil
+	}
+
+	log.Printf("ID: %s, Amount: %q, Method: %s, Result: Success\n", req.Uuid, req.Amount, req.PaymentMethod)
+	return &pbBancoUSM.PaymentResponse{
+		Success: true,
+		Message: "Payment successful",
+	}, nil
 }
 
 func StartBancoServer(listener net.Listener, node *Banco) {
