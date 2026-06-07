@@ -53,6 +53,7 @@ services:
       - "NAME=Consumidor2"
       - "PORT=5002"
       - "BROKER_URL=broker:5001"
+    
   productor1:
     build:
       context: ./Productor

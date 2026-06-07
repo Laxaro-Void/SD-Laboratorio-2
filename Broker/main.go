@@ -14,6 +14,7 @@ import (
 	dsConextionManager "Broker/dsConexionManager"
 	pbRegisterAuth "Broker/proto/pbRegisterAuth"
 	pbConsumer "Broker/proto/pbConsumer"
+	pbProducer "Broker/proto/pbProducer"
 )
 
 type Broker struct {
@@ -33,6 +34,23 @@ type RegisterAuthServer struct {
 type ConsumerServer struct {
 	pbConsumer.UnimplementedConsumerServer
 	broker *Broker
+}
+
+type ProducerServer struct {
+	pbProducer.UnimplementedProducerServer
+	broker *Broker
+}
+
+type Event struct {
+	Evento_id string
+	Discoteca string
+	Nombre_evento string
+	Categoria string
+	Comuna string
+	Precio int
+	Stock int
+	Fecha_evento string
+	Fecha_publicacion string
 }
 
 /*
@@ -152,6 +170,51 @@ func (s *RegisterAuthServer) RegisterBanco(ctx context.Context, req *pbRegisterA
 
 }
 
+func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.PublishEventRequest) (*pbProducer.PublishEventResponse, error) {
+	if !s.broker.trustedConexions.Exists(req.Uuid) {
+		log.Println("Recive a Untrusted Node Request")
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
+		log.Println("Recive a not authenticated Node Request")
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	var event Event
+	event.Evento_id = req.EventoId
+	event.Discoteca = req.Discoteca
+	event.Nombre_evento = req.NombreEvento
+	event.Categoria = req.Categoria
+	event.Comuna = req.Comuna
+	event.Precio = int(req.Precio)
+	event.Stock = int(req.Stock)
+	event.Fecha_evento = req.FechaEvento
+	event.Fecha_publicacion = time.Now().Format(time.RFC3339)
+
+	// Validación
+	if event.Precio <= 0 && event.Stock <= 0 {
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "Invalid event data",
+		}, nil
+	}
+
+	// Publish event to DynamoDB
+	log.Printf("Publishing Event %s to DynamoDB", event.Evento_id)
+
+	return &pbProducer.PublishEventResponse{
+		Success: true,
+		Message: "Event published successfully",
+	}, nil
+}
+
 func ValidateEvent() {
 
 }
@@ -182,6 +245,20 @@ func StartRegisterAuthServer(listener net.Listener, broker *Broker) {
 	}
 }
 
+func StartProducerServer(listener net.Listener, broker *Broker) {
+	ProducerServer := &ProducerServer{
+		broker: broker,
+	}
+
+	grpcServer := grpc.NewServer()
+	pbProducer.RegisterProducerServer(grpcServer, ProducerServer)
+
+	log.Printf("ProducerServer is listening on %s", listener.Addr().String())
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
+}
+
 func serverBackground() {
 	broker := &Broker{
 		trustedConexions:      dsRegisterMap.NewRegisterMap(),
@@ -202,6 +279,7 @@ func serverBackground() {
 	}
 
 	go StartRegisterAuthServer(listener, broker)
+	go StartProducerServer(listener, broker)
 
 	forever := make(chan bool)
 	log.Printf("Waiting for messages. To exit press CTRL+C")
