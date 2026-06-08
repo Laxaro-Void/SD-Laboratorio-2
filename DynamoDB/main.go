@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -14,12 +15,20 @@ import (
 	pbRegisterAuth "DynamoDB/proto/pbRegisterAuth"
 )
 
+type Table struct {
+	Name string
+	Data map[string][]byte
+}
+
 type Node struct {
-	BrokerConnection *grpc.ClientConn
+	BrokerConnection   *grpc.ClientConn
 	RegisterAuthClient pbRegisterAuth.RegisterAuthClient
 
 	KeyPath string
-	uuid string
+	uuid    string
+
+	mu   sync.Mutex
+	Tables map[string]Table
 }
 
 type NodeServer struct {
@@ -83,7 +92,7 @@ func (c *Node) Register(username string) (string, bool) {
 func (c *Node) Authenciate(username string, uuid string) bool {
 	message := pbRegisterAuth.AuthRequest{
 		Username: username,
-		Uuid: uuid,
+		Uuid:     uuid,
 	}
 
 	response, err := c.RegisterAuthClient.Authenticate(context.Background(), &message)
@@ -106,7 +115,7 @@ func (c *Node) RequestSession() bool {
 		for {
 			key, succes = c.Register(os.Getenv("NAME"))
 			if succes {
-				break;
+				break
 			}
 			log.Println("Retrining in 5 second...")
 			time.Sleep(5 * time.Second)
@@ -122,7 +131,7 @@ func (c *Node) RequestSession() bool {
 func (c *Node) RegisterNode() bool {
 	uuid, _ := c.ReadUUID()
 	message := &pbRegisterAuth.RegisterNodeRequest{
-		Uuid: uuid,
+		Uuid:      uuid,
 		Direction: os.Getenv("MYDIRECTION"),
 	}
 
@@ -149,6 +158,82 @@ func NewGRPCClient(address string) *grpc.ClientConn {
 	return conn
 }
 
+func (s *NodeServer) CheckIsAlive(ctx context.Context, req *pbDynamoDB.Empty) (*pbDynamoDB.IsAliveResponde, error) {
+	return &pbDynamoDB.IsAliveResponde{
+		IsAlive: true,
+	}, nil
+}
+
+func (s *NodeServer) CreateTable(ctx context.Context, req *pbDynamoDB.CreateTableRequest) (*pbDynamoDB.CreateTableResponse, error) {
+	s.node.mu.Lock()
+	defer s.node.mu.Unlock()
+
+	if _, exists := s.node.Tables[req.TableName]; exists {
+		return &pbDynamoDB.CreateTableResponse{
+			Success: false,
+			Message: "Table already exists",
+		}, nil
+	}
+
+	s.node.Tables[req.TableName] = Table{
+		Name: req.TableName,
+		Data: make(map[string][]byte),
+	}
+
+	return &pbDynamoDB.CreateTableResponse{
+		Success: true,
+		Message: "Table created successfully",
+	}, nil
+}
+
+func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest) (*pbDynamoDB.PutItemResponse, error) {
+	s.node.mu.Lock()
+	defer s.node.mu.Unlock()
+
+	table, exists := s.node.Tables[req.TableName]
+	if !exists {
+		return &pbDynamoDB.PutItemResponse{
+			Success: false,
+			Message: "Table does not exist",
+		}, nil
+	}
+
+	table.Data[req.Key] = req.Value
+	s.node.Tables[req.TableName] = table
+
+	return &pbDynamoDB.PutItemResponse{
+		Success: true,
+		Message: "Item added successfully",
+	}, nil
+}
+
+func (s *NodeServer) GetItem(ctx context.Context, req *pbDynamoDB.GetItemRequest) (*pbDynamoDB.GetItemResponse, error) {
+	s.node.mu.Lock()
+	defer s.node.mu.Unlock()
+
+	table, exists := s.node.Tables[req.TableName]
+	if !exists {
+		return &pbDynamoDB.GetItemResponse{
+			Success: false,
+			Message: "Table does not exist",
+		}, nil
+	}
+
+	value, exists := table.Data[req.Key]
+	if !exists {
+		return &pbDynamoDB.GetItemResponse{
+			Success: false,
+			Message: "Key does not exist",
+		}, nil
+	}
+
+	return &pbDynamoDB.GetItemResponse{
+		Success: true,
+		Message: "Item retrieved successfully",
+		Value:   value,
+	}, nil
+}
+
 func StartNodeServer(listener net.Listener, node *Node) {
 	NodeServer := &NodeServer{
 		node: node,
@@ -168,9 +253,9 @@ func initNode() {
 	defer BrokerConnection.Close()
 
 	node := &Node{
-		BrokerConnection: BrokerConnection,
+		BrokerConnection:   BrokerConnection,
 		RegisterAuthClient: pbRegisterAuth.NewRegisterAuthClient(BrokerConnection),
-		KeyPath: "keys/" + os.Getenv("NAME") + "-key.txt",
+		KeyPath:            "keys/" + os.Getenv("NAME") + "-key.txt",
 	}
 
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
@@ -180,7 +265,7 @@ func initNode() {
 
 	go StartNodeServer(listener, node)
 	time.Sleep(2 * time.Second)
-	
+
 	if !node.RequestSession() {
 		panic("Unable to request Session")
 	}

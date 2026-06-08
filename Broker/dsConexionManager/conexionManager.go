@@ -22,7 +22,7 @@ type Node struct {
 }
 
 type DynamoDB struct {
-	// COnfiguration
+	// Configuration
 	N int
 	W int
 	R int
@@ -99,9 +99,144 @@ func (s *DynamoDB) CheckIsAliveProcedure() {
 					return
 				}
 			}(direction, node)
-			
 		}
 	}
+}
+
+func (s *DynamoDB) CreateTable(tableName string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if len(s.Nodes) == 0 {
+		log.Printf("Failed to create table %s: No nodes available\n", tableName)
+		return false
+	}
+
+	success := 0
+
+	for _, node := range s.Nodes {
+		if node.state == "Connected" {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel();
+			res, err := node.client.CreateTable(ctx, &pbDynamoDB.CreateTableRequest{
+				TableName: tableName,
+			})
+			if err != nil || !res.Success {
+				log.Printf("Failed to create table %s on node %s: %v\n", tableName, node.direction, err)
+			}
+			success++
+		} else {
+			log.Printf("Failed to create table %s on node %s: Node is not connected\n", tableName, node.direction)
+		}
+	}
+
+	if success < s.W {
+		log.Printf("Failed to create table %s: Some nodes failed to create the table\n", tableName)
+		return false
+	}
+
+	return true
+}
+
+func (s *DynamoDB) PutItem(tableName string, key string, data []byte) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if len(s.Nodes) == 0 {
+		log.Printf("Failed to put item in table %s: No nodes available\n", tableName)
+		return false
+	}
+
+	success := 0
+
+	for _, node := range s.Nodes {
+		if node.state == "Connected" {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel();
+			res, err := node.client.PutItem(ctx, &pbDynamoDB.PutItemRequest{
+				TableName: tableName,
+				Key: key,
+				Value: data,
+			})
+			if err != nil || !res.Success {
+				log.Printf("Failed to put item in table %s on node %s: %v\n", tableName, node.direction, err)
+			}
+			success++
+		} else {
+			log.Printf("Failed to put item in table %s on node %s: Node is not connected\n", tableName, node.direction)
+		}
+	}
+
+	if success < s.W {
+		log.Printf("Failed to put item in table %s: Some nodes failed to put the item\n", tableName)
+		return false
+	}
+
+	return true
+}
+
+func (s *DynamoDB) GetItem(tableName string, key string) ([]byte, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if len(s.Nodes) == 0 {
+		log.Printf("Failed to get item from table %s: No nodes available\n", tableName)
+		return nil, false
+	}
+
+	success := 0
+	var resValues [][]byte
+
+	for _, node := range s.Nodes {
+		if node.state == "Connected" {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel();
+			res, err := node.client.GetItem(ctx, &pbDynamoDB.GetItemRequest{
+				TableName: tableName,
+				Key: key,
+			})
+			if err != nil || !res.Success {
+				log.Printf("Failed to get item from table %s on node %s: %v\n", tableName, node.direction, err)
+				continue
+			}
+			success++
+			resValues = append(resValues, res.Value)
+		} else {
+			log.Printf("Failed to get item from table %s on node %s: Node is not connected\n", tableName, node.direction)
+		}
+	}
+
+	if success < s.R {
+		log.Printf("Failed to get item from table %s: Not enough successful reads for quorum\n", tableName)
+		return nil, false
+	}
+
+	counts := make(map[string]int)
+	values := make(map[string][]byte)
+
+	for _, value := range resValues {
+		valueKey := string(value)
+		counts[valueKey]++
+		if _, ok := values[valueKey]; !ok {
+			values[valueKey] = value
+		}
+	}
+
+	mostCount := 0
+	var mostValue []byte
+	for key, count := range counts {
+		if count > mostCount {
+			mostCount = count
+			mostValue = values[key]
+		}
+	}
+
+	if mostCount < s.R {
+		log.Printf("Failed to get item from table %s: No value reached quorum of %d reads\n", tableName, s.R)
+		return nil, false
+	}
+
+	return mostValue, true
 }
 
 type BancoUSM struct {

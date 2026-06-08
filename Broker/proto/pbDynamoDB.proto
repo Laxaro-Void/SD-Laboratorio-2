@@ -6,6 +6,9 @@ package pbDynamoDB;
 // Service for Register and Authentication of Consumers, Productors
 service DynamoDB {
     rpc CheckIsAlive(Empty) returns (IsAliveResponde);
+    rpc CreateTable(CreateTableRequest) returns (CreateTableResponse);
+    rpc PutItem(PutItemRequest) returns (PutItemResponse);
+    rpc GetItem(GetItemRequest) returns (GetItemResponse);
 }
 
 message Empty {
@@ -14,4 +17,36 @@ message Empty {
 
 message IsAliveResponde {
     bool isAlive = 1;
+}
+
+message CreateTableRequest {
+    string table_name = 1;
+}
+
+message CreateTableResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+
+message PutItemRequest {
+    string table_name = 1;
+    string key = 2;
+    bytes value = 3;
+}
+
+message PutItemResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message GetItemRequest {
+    string table_name = 1;
+    string key = 2;
+}
+
+message GetItemResponse {
+    bool success = 1;
+    bytes value = 2;
+    string message = 3;
 }

@@ -101,6 +101,326 @@ func (x *IsAliveResponde) GetIsAlive() bool {
 	return false
 }
 
+type CreateTableRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TableName     string                 `protobuf:"bytes,1,opt,name=table_name,json=tableName,proto3" json:"table_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTableRequest) Reset() {
+	*x = CreateTableRequest{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTableRequest) ProtoMessage() {}
+
+func (x *CreateTableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTableRequest.ProtoReflect.Descriptor instead.
+func (*CreateTableRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateTableRequest) GetTableName() string {
+	if x != nil {
+		return x.TableName
+	}
+	return ""
+}
+
+type CreateTableResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTableResponse) Reset() {
+	*x = CreateTableResponse{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTableResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTableResponse) ProtoMessage() {}
+
+func (x *CreateTableResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTableResponse.ProtoReflect.Descriptor instead.
+func (*CreateTableResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateTableResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *CreateTableResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type PutItemRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TableName     string                 `protobuf:"bytes,1,opt,name=table_name,json=tableName,proto3" json:"table_name,omitempty"`
+	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Value         []byte                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutItemRequest) Reset() {
+	*x = PutItemRequest{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutItemRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutItemRequest) ProtoMessage() {}
+
+func (x *PutItemRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutItemRequest.ProtoReflect.Descriptor instead.
+func (*PutItemRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PutItemRequest) GetTableName() string {
+	if x != nil {
+		return x.TableName
+	}
+	return ""
+}
+
+func (x *PutItemRequest) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *PutItemRequest) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type PutItemResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutItemResponse) Reset() {
+	*x = PutItemResponse{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutItemResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutItemResponse) ProtoMessage() {}
+
+func (x *PutItemResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutItemResponse.ProtoReflect.Descriptor instead.
+func (*PutItemResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PutItemResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *PutItemResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type GetItemRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TableName     string                 `protobuf:"bytes,1,opt,name=table_name,json=tableName,proto3" json:"table_name,omitempty"`
+	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetItemRequest) Reset() {
+	*x = GetItemRequest{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetItemRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetItemRequest) ProtoMessage() {}
+
+func (x *GetItemRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetItemRequest.ProtoReflect.Descriptor instead.
+func (*GetItemRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetItemRequest) GetTableName() string {
+	if x != nil {
+		return x.TableName
+	}
+	return ""
+}
+
+func (x *GetItemRequest) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+type GetItemResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetItemResponse) Reset() {
+	*x = GetItemResponse{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetItemResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetItemResponse) ProtoMessage() {}
+
+func (x *GetItemResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetItemResponse.ProtoReflect.Descriptor instead.
+func (*GetItemResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetItemResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *GetItemResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *GetItemResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_Broker_proto_pbDynamoDB_proto protoreflect.FileDescriptor
 
 const file_Broker_proto_pbDynamoDB_proto_rawDesc = "" +
@@ -109,9 +429,34 @@ const file_Broker_proto_pbDynamoDB_proto_rawDesc = "" +
 	"pbDynamoDB\"\a\n" +
 	"\x05Empty\"+\n" +
 	"\x0fIsAliveResponde\x12\x18\n" +
-	"\aisAlive\x18\x01 \x01(\bR\aisAlive2J\n" +
+	"\aisAlive\x18\x01 \x01(\bR\aisAlive\"3\n" +
+	"\x12CreateTableRequest\x12\x1d\n" +
+	"\n" +
+	"table_name\x18\x01 \x01(\tR\ttableName\"I\n" +
+	"\x13CreateTableResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"W\n" +
+	"\x0ePutItemRequest\x12\x1d\n" +
+	"\n" +
+	"table_name\x18\x01 \x01(\tR\ttableName\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\fR\x05value\"E\n" +
+	"\x0fPutItemResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"A\n" +
+	"\x0eGetItemRequest\x12\x1d\n" +
+	"\n" +
+	"table_name\x18\x01 \x01(\tR\ttableName\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\"[\n" +
+	"\x0fGetItemResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage2\xa2\x02\n" +
 	"\bDynamoDB\x12>\n" +
-	"\fCheckIsAlive\x12\x11.pbDynamoDB.Empty\x1a\x1b.pbDynamoDB.IsAliveRespondeB\x0eZ\f./pbDynamoDBb\x06proto3"
+	"\fCheckIsAlive\x12\x11.pbDynamoDB.Empty\x1a\x1b.pbDynamoDB.IsAliveResponde\x12N\n" +
+	"\vCreateTable\x12\x1e.pbDynamoDB.CreateTableRequest\x1a\x1f.pbDynamoDB.CreateTableResponse\x12B\n" +
+	"\aPutItem\x12\x1a.pbDynamoDB.PutItemRequest\x1a\x1b.pbDynamoDB.PutItemResponse\x12B\n" +
+	"\aGetItem\x12\x1a.pbDynamoDB.GetItemRequest\x1a\x1b.pbDynamoDB.GetItemResponseB\x0eZ\f./pbDynamoDBb\x06proto3"
 
 var (
 	file_Broker_proto_pbDynamoDB_proto_rawDescOnce sync.Once
@@ -125,16 +470,28 @@ func file_Broker_proto_pbDynamoDB_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbDynamoDB_proto_rawDescData
 }
 
-var file_Broker_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_Broker_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_Broker_proto_pbDynamoDB_proto_goTypes = []any{
-	(*Empty)(nil),           // 0: pbDynamoDB.Empty
-	(*IsAliveResponde)(nil), // 1: pbDynamoDB.IsAliveResponde
+	(*Empty)(nil),               // 0: pbDynamoDB.Empty
+	(*IsAliveResponde)(nil),     // 1: pbDynamoDB.IsAliveResponde
+	(*CreateTableRequest)(nil),  // 2: pbDynamoDB.CreateTableRequest
+	(*CreateTableResponse)(nil), // 3: pbDynamoDB.CreateTableResponse
+	(*PutItemRequest)(nil),      // 4: pbDynamoDB.PutItemRequest
+	(*PutItemResponse)(nil),     // 5: pbDynamoDB.PutItemResponse
+	(*GetItemRequest)(nil),      // 6: pbDynamoDB.GetItemRequest
+	(*GetItemResponse)(nil),     // 7: pbDynamoDB.GetItemResponse
 }
 var file_Broker_proto_pbDynamoDB_proto_depIdxs = []int32{
 	0, // 0: pbDynamoDB.DynamoDB.CheckIsAlive:input_type -> pbDynamoDB.Empty
-	1, // 1: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: pbDynamoDB.DynamoDB.CreateTable:input_type -> pbDynamoDB.CreateTableRequest
+	4, // 2: pbDynamoDB.DynamoDB.PutItem:input_type -> pbDynamoDB.PutItemRequest
+	6, // 3: pbDynamoDB.DynamoDB.GetItem:input_type -> pbDynamoDB.GetItemRequest
+	1, // 4: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
+	3, // 5: pbDynamoDB.DynamoDB.CreateTable:output_type -> pbDynamoDB.CreateTableResponse
+	5, // 6: pbDynamoDB.DynamoDB.PutItem:output_type -> pbDynamoDB.PutItemResponse
+	7, // 7: pbDynamoDB.DynamoDB.GetItem:output_type -> pbDynamoDB.GetItemResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -151,7 +508,7 @@ func file_Broker_proto_pbDynamoDB_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbDynamoDB_proto_rawDesc), len(file_Broker_proto_pbDynamoDB_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

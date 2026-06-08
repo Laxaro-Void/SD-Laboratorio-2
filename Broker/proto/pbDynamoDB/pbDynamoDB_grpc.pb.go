@@ -20,6 +20,9 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	DynamoDB_CheckIsAlive_FullMethodName = "/pbDynamoDB.DynamoDB/CheckIsAlive"
+	DynamoDB_CreateTable_FullMethodName  = "/pbDynamoDB.DynamoDB/CreateTable"
+	DynamoDB_PutItem_FullMethodName      = "/pbDynamoDB.DynamoDB/PutItem"
+	DynamoDB_GetItem_FullMethodName      = "/pbDynamoDB.DynamoDB/GetItem"
 )
 
 // DynamoDBClient is the client API for DynamoDB service.
@@ -29,6 +32,9 @@ const (
 // Service for Register and Authentication of Consumers, Productors
 type DynamoDBClient interface {
 	CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error)
+	CreateTable(ctx context.Context, in *CreateTableRequest, opts ...grpc.CallOption) (*CreateTableResponse, error)
+	PutItem(ctx context.Context, in *PutItemRequest, opts ...grpc.CallOption) (*PutItemResponse, error)
+	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
 }
 
 type dynamoDBClient struct {
@@ -49,6 +55,36 @@ func (c *dynamoDBClient) CheckIsAlive(ctx context.Context, in *Empty, opts ...gr
 	return out, nil
 }
 
+func (c *dynamoDBClient) CreateTable(ctx context.Context, in *CreateTableRequest, opts ...grpc.CallOption) (*CreateTableResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTableResponse)
+	err := c.cc.Invoke(ctx, DynamoDB_CreateTable_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dynamoDBClient) PutItem(ctx context.Context, in *PutItemRequest, opts ...grpc.CallOption) (*PutItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PutItemResponse)
+	err := c.cc.Invoke(ctx, DynamoDB_PutItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dynamoDBClient) GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetItemResponse)
+	err := c.cc.Invoke(ctx, DynamoDB_GetItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DynamoDBServer is the server API for DynamoDB service.
 // All implementations must embed UnimplementedDynamoDBServer
 // for forward compatibility.
@@ -56,6 +92,9 @@ func (c *dynamoDBClient) CheckIsAlive(ctx context.Context, in *Empty, opts ...gr
 // Service for Register and Authentication of Consumers, Productors
 type DynamoDBServer interface {
 	CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error)
+	CreateTable(context.Context, *CreateTableRequest) (*CreateTableResponse, error)
+	PutItem(context.Context, *PutItemRequest) (*PutItemResponse, error)
+	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
 	mustEmbedUnimplementedDynamoDBServer()
 }
 
@@ -68,6 +107,15 @@ type UnimplementedDynamoDBServer struct{}
 
 func (UnimplementedDynamoDBServer) CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckIsAlive not implemented")
+}
+func (UnimplementedDynamoDBServer) CreateTable(context.Context, *CreateTableRequest) (*CreateTableResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTable not implemented")
+}
+func (UnimplementedDynamoDBServer) PutItem(context.Context, *PutItemRequest) (*PutItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PutItem not implemented")
+}
+func (UnimplementedDynamoDBServer) GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetItem not implemented")
 }
 func (UnimplementedDynamoDBServer) mustEmbedUnimplementedDynamoDBServer() {}
 func (UnimplementedDynamoDBServer) testEmbeddedByValue()                  {}
@@ -108,6 +156,60 @@ func _DynamoDB_CheckIsAlive_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DynamoDB_CreateTable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DynamoDBServer).CreateTable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DynamoDB_CreateTable_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DynamoDBServer).CreateTable(ctx, req.(*CreateTableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DynamoDB_PutItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DynamoDBServer).PutItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DynamoDB_PutItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DynamoDBServer).PutItem(ctx, req.(*PutItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DynamoDB_GetItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DynamoDBServer).GetItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DynamoDB_GetItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DynamoDBServer).GetItem(ctx, req.(*GetItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DynamoDB_ServiceDesc is the grpc.ServiceDesc for DynamoDB service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -118,6 +220,18 @@ var DynamoDB_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckIsAlive",
 			Handler:    _DynamoDB_CheckIsAlive_Handler,
+		},
+		{
+			MethodName: "CreateTable",
+			Handler:    _DynamoDB_CreateTable_Handler,
+		},
+		{
+			MethodName: "PutItem",
+			Handler:    _DynamoDB_PutItem_Handler,
+		},
+		{
+			MethodName: "GetItem",
+			Handler:    _DynamoDB_GetItem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

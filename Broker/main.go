@@ -15,7 +15,6 @@ import (
 	pbRegisterAuth "Broker/proto/pbRegisterAuth"
 	pbProducer "Broker/proto/pbProducer"
 	pbConsumer "Broker/proto/pbConsumer"
-	pbBancoUSM "Broker/proto/pbBancoUSM"
 )
 
 type Broker struct {
