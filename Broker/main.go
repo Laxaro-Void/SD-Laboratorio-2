@@ -342,6 +342,18 @@ func StartServers(broker *Broker) {
 	}
 }
 
+func (s *Broker) InitTables() {
+	for !s.dynamoDBClient.CreateTable("Eventos") {
+		log.Println("Failed to create table, retrying in 2 seconds...")
+		time.Sleep(2 * time.Second)
+	}
+
+	for !s.dynamoDBClient.CreateTable("Tickets") {
+		log.Println("Failed to create table, retrying in 2 seconds...")
+		time.Sleep(2 * time.Second)
+	}
+}
+
 func serverBackground() {
 	broker := &Broker{
 		trustedConexions:       dsRegisterMap.NewRegisterMap(),
@@ -357,6 +369,9 @@ func serverBackground() {
 	broker.dynamoDBClient.Nodes = make(map[string]dsConextionManager.Node)
 
 	go StartServers(broker)
+	time.Sleep(2 * time.Second)
+
+	broker.InitTables()
 
 	forever := make(chan bool)
 	log.Printf("Waiting for messages. To exit press CTRL+C")

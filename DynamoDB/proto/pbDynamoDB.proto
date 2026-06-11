@@ -9,6 +9,9 @@ service DynamoDB {
     rpc CreateTable(CreateTableRequest) returns (CreateTableResponse);
     rpc PutItem(PutItemRequest) returns (PutItemResponse);
     rpc GetItem(GetItemRequest) returns (GetItemResponse);
+
+    rpc SyncNode(SyncNodeRequest) returns (SyncNodeResponse);
+    rpc GetAllData(Empty) returns (GetAllDataResponse);
 }
 
 message Empty {
@@ -27,7 +30,6 @@ message CreateTableResponse {
     bool success = 1;
     string message = 2;
 }
-
 
 message PutItemRequest {
     string table_name = 1;
@@ -48,5 +50,20 @@ message GetItemRequest {
 message GetItemResponse {
     bool success = 1;
     bytes value = 2;
+    string message = 3;
+}
+
+message SyncNodeRequest {
+    map<string, bytes> data = 1;
+}
+
+message SyncNodeResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message GetAllDataResponse {
+    bool success = 1;
+    map<string, bytes> data = 2;
     string message = 3;
 }

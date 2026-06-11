@@ -81,6 +81,23 @@ func (s *DynamoDB) ChangeStatusNode(direction string, status string) {
 	s.Nodes[direction] = node
 }
 
+func (s *DynamoDB) GetIsSyncNode(direction string) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	node := s.Nodes[direction]
+	return node.isSync
+}
+
+func (s *DynamoDB) SetIsSyncNode(direction string, isSync bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	node := s.Nodes[direction]
+	node.isSync = isSync
+	s.Nodes[direction] = node
+}
+
 // Must be call using a go function
 func (s *DynamoDB) CheckIsAliveProcedure() {
 	for {
@@ -103,6 +120,35 @@ func (s *DynamoDB) CheckIsAliveProcedure() {
 	}
 }
 
+func (s *DynamoDB) SyncNode(origin string, direction string) {
+	originNode := s.Nodes[origin]
+	targetNode := s.Nodes[direction]
+
+	if originNode.state != "Connected" || targetNode.state != "Connected" {
+		log.Printf("Failed to sync nodes: One or both nodes are not connected\n")
+		return
+	}
+
+	res, err := originNode.client.GetAllData(context.Background(), &pbDynamoDB.Empty{})
+	if err != nil || !res.Success {
+		log.Printf("Failed to get data from origin node %s: %v\n", origin, err)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel();
+	syncRes, err := targetNode.client.SyncNode(ctx, &pbDynamoDB.SyncNodeRequest{
+		Data: res.Data,
+	})
+	if err != nil || !syncRes.Success {
+		log.Printf("Failed to sync data to target node %s: %v\n", direction, err)
+		return
+	}
+
+	log.Printf("Successfully synced data from node %s to node %s\n", origin, direction)
+	s.SetIsSyncNode(direction, true)
+}
+
 func (s *DynamoDB) CreateTable(tableName string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -113,6 +159,8 @@ func (s *DynamoDB) CreateTable(tableName string) bool {
 	}
 
 	success := 0
+	var successNodes []string
+	var failedNodes []string
 
 	for _, node := range s.Nodes {
 		if node.state == "Connected" {
@@ -123,8 +171,11 @@ func (s *DynamoDB) CreateTable(tableName string) bool {
 			})
 			if err != nil || !res.Success {
 				log.Printf("Failed to create table %s on node %s: %v\n", tableName, node.direction, err)
+				failedNodes = append(failedNodes, node.direction)
+			} else {
+				successNodes = append(successNodes, node.direction)
+				success++
 			}
-			success++
 		} else {
 			log.Printf("Failed to create table %s on node %s: Node is not connected\n", tableName, node.direction)
 		}
@@ -133,6 +184,12 @@ func (s *DynamoDB) CreateTable(tableName string) bool {
 	if success < s.W {
 		log.Printf("Failed to create table %s: Some nodes failed to create the table\n", tableName)
 		return false
+	}
+
+	log.Printf("Successfully created table %s on nodes: %v\n", tableName, successNodes)
+	for _, direction := range failedNodes {
+		log.Printf("Failed to create table %s on node %s\n", tableName, direction)
+		s.SyncNode(successNodes[0], direction)
 	}
 
 	return true
@@ -148,6 +205,8 @@ func (s *DynamoDB) PutItem(tableName string, key string, data []byte) bool {
 	}
 
 	success := 0
+	var successNodes []string
+	var failedNodes []string
 
 	for _, node := range s.Nodes {
 		if node.state == "Connected" {
@@ -160,8 +219,11 @@ func (s *DynamoDB) PutItem(tableName string, key string, data []byte) bool {
 			})
 			if err != nil || !res.Success {
 				log.Printf("Failed to put item in table %s on node %s: %v\n", tableName, node.direction, err)
+				failedNodes = append(failedNodes, node.direction)
+			} else {
+				successNodes = append(successNodes, node.direction)
+				success++
 			}
-			success++
 		} else {
 			log.Printf("Failed to put item in table %s on node %s: Node is not connected\n", tableName, node.direction)
 		}
@@ -170,6 +232,12 @@ func (s *DynamoDB) PutItem(tableName string, key string, data []byte) bool {
 	if success < s.W {
 		log.Printf("Failed to put item in table %s: Some nodes failed to put the item\n", tableName)
 		return false
+	}
+
+	log.Printf("Successfully put item in table %s on nodes: %v\n", tableName, successNodes)
+	for _, direction := range failedNodes {
+		log.Printf("Failed to put item in table %s on node %s\n", tableName, direction)
+		s.SyncNode(successNodes[0], direction)
 	}
 
 	return true
@@ -186,6 +254,9 @@ func (s *DynamoDB) GetItem(tableName string, key string) ([]byte, bool) {
 
 	success := 0
 	var resValues [][]byte
+	directionNodes := make(map[string]string)
+	var successNodesGet []string
+	var failedNodes []string
 
 	for _, node := range s.Nodes {
 		if node.state == "Connected" {
@@ -197,10 +268,13 @@ func (s *DynamoDB) GetItem(tableName string, key string) ([]byte, bool) {
 			})
 			if err != nil || !res.Success {
 				log.Printf("Failed to get item from table %s on node %s: %v\n", tableName, node.direction, err)
+				failedNodes = append(failedNodes, node.direction)
 				continue
 			}
 			success++
 			resValues = append(resValues, res.Value)
+			directionNodes[node.direction] = string(res.Value)
+			successNodesGet = append(successNodesGet, node.direction)
 		} else {
 			log.Printf("Failed to get item from table %s on node %s: Node is not connected\n", tableName, node.direction)
 		}
@@ -236,6 +310,12 @@ func (s *DynamoDB) GetItem(tableName string, key string) ([]byte, bool) {
 		return nil, false
 	}
 
+	for _, direction := range failedNodes {
+		log.Printf("Failed to get item from table %s on node %s\n", tableName, direction)
+		s.SyncNode(successNodesGet[0], direction)
+	}
+
+	log.Printf("Successfully got item from table %s with key %s: value=%v\n", tableName, key, mostValue)
 	return mostValue, true
 }
 

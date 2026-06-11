@@ -180,6 +180,8 @@ func (s *NodeServer) CreateTable(ctx context.Context, req *pbDynamoDB.CreateTabl
 		Data: make(map[string][]byte),
 	}
 
+	log.Printf("Table %s created successfully", req.TableName)
+
 	return &pbDynamoDB.CreateTableResponse{
 		Success: true,
 		Message: "Table created successfully",
@@ -198,6 +200,7 @@ func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest
 		}, nil
 	}
 
+	log.Printf("Adding item to table %s: key=%s, value=%v", req.TableName, req.Key, req.Value)
 	table.Data[req.Key] = req.Value
 	s.node.Tables[req.TableName] = table
 
