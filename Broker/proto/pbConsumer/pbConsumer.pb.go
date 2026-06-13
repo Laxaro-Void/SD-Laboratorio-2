@@ -65,34 +65,36 @@ func (x *GetEventsRequest) GetUuid() string {
 	return ""
 }
 
-type Events struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EventID       string                 `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`
-	Discoteca     string                 `protobuf:"bytes,2,opt,name=discoteca,proto3" json:"discoteca,omitempty"`
-	NombreEvento  string                 `protobuf:"bytes,3,opt,name=nombreEvento,proto3" json:"nombreEvento,omitempty"`
-	Categoria     string                 `protobuf:"bytes,4,opt,name=categoria,proto3" json:"categoria,omitempty"`
-	Comuna        string                 `protobuf:"bytes,5,opt,name=comuna,proto3" json:"comuna,omitempty"`
-	Precio        int32                  `protobuf:"varint,6,opt,name=precio,proto3" json:"precio,omitempty"`
-	Stock         int32                  `protobuf:"varint,7,opt,name=stock,proto3" json:"stock,omitempty"`
-	FechaEvento   string                 `protobuf:"bytes,8,opt,name=fechaEvento,proto3" json:"fechaEvento,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+type Event struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	EventID          string                 `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`
+	Discoteca        string                 `protobuf:"bytes,2,opt,name=discoteca,proto3" json:"discoteca,omitempty"`
+	NombreEvento     string                 `protobuf:"bytes,3,opt,name=nombreEvento,proto3" json:"nombreEvento,omitempty"`
+	Categoria        string                 `protobuf:"bytes,4,opt,name=categoria,proto3" json:"categoria,omitempty"`
+	Comuna           string                 `protobuf:"bytes,5,opt,name=comuna,proto3" json:"comuna,omitempty"`
+	Precio           int32                  `protobuf:"varint,6,opt,name=precio,proto3" json:"precio,omitempty"`
+	Stock            int32                  `protobuf:"varint,7,opt,name=stock,proto3" json:"stock,omitempty"`
+	SpendStock       int32                  `protobuf:"varint,8,opt,name=spendStock,proto3" json:"spendStock,omitempty"`
+	FechaEvento      string                 `protobuf:"bytes,9,opt,name=fechaEvento,proto3" json:"fechaEvento,omitempty"`
+	FechaPublicacion string                 `protobuf:"bytes,10,opt,name=fechaPublicacion,proto3" json:"fechaPublicacion,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *Events) Reset() {
-	*x = Events{}
+func (x *Event) Reset() {
+	*x = Event{}
 	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Events) String() string {
+func (x *Event) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Events) ProtoMessage() {}
+func (*Event) ProtoMessage() {}
 
-func (x *Events) ProtoReflect() protoreflect.Message {
+func (x *Event) ProtoReflect() protoreflect.Message {
 	mi := &file_Broker_proto_pbConsumer_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -104,63 +106,77 @@ func (x *Events) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Events.ProtoReflect.Descriptor instead.
-func (*Events) Descriptor() ([]byte, []int) {
+// Deprecated: Use Event.ProtoReflect.Descriptor instead.
+func (*Event) Descriptor() ([]byte, []int) {
 	return file_Broker_proto_pbConsumer_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Events) GetEventID() string {
+func (x *Event) GetEventID() string {
 	if x != nil {
 		return x.EventID
 	}
 	return ""
 }
 
-func (x *Events) GetDiscoteca() string {
+func (x *Event) GetDiscoteca() string {
 	if x != nil {
 		return x.Discoteca
 	}
 	return ""
 }
 
-func (x *Events) GetNombreEvento() string {
+func (x *Event) GetNombreEvento() string {
 	if x != nil {
 		return x.NombreEvento
 	}
 	return ""
 }
 
-func (x *Events) GetCategoria() string {
+func (x *Event) GetCategoria() string {
 	if x != nil {
 		return x.Categoria
 	}
 	return ""
 }
 
-func (x *Events) GetComuna() string {
+func (x *Event) GetComuna() string {
 	if x != nil {
 		return x.Comuna
 	}
 	return ""
 }
 
-func (x *Events) GetPrecio() int32 {
+func (x *Event) GetPrecio() int32 {
 	if x != nil {
 		return x.Precio
 	}
 	return 0
 }
 
-func (x *Events) GetStock() int32 {
+func (x *Event) GetStock() int32 {
 	if x != nil {
 		return x.Stock
 	}
 	return 0
 }
 
-func (x *Events) GetFechaEvento() string {
+func (x *Event) GetSpendStock() int32 {
+	if x != nil {
+		return x.SpendStock
+	}
+	return 0
+}
+
+func (x *Event) GetFechaEvento() string {
 	if x != nil {
 		return x.FechaEvento
+	}
+	return ""
+}
+
+func (x *Event) GetFechaPublicacion() string {
+	if x != nil {
+		return x.FechaPublicacion
 	}
 	return ""
 }
@@ -169,7 +185,7 @@ type GetEventsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Succes        bool                   `protobuf:"varint,1,opt,name=succes,proto3" json:"succes,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	Events        []*Events              `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
+	Events        []*Event               `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -218,7 +234,7 @@ func (x *GetEventsResponse) GetMessage() string {
 	return ""
 }
 
-func (x *GetEventsResponse) GetEvents() []*Events {
+func (x *GetEventsResponse) GetEvents() []*Event {
 	if x != nil {
 		return x.Events
 	}
@@ -360,20 +376,25 @@ const file_Broker_proto_pbConsumer_proto_rawDesc = "" +
 	"\x1dBroker/proto/pbConsumer.proto\x12\n" +
 	"pbConsumer\"&\n" +
 	"\x10GetEventsRequest\x12\x12\n" +
-	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"\xea\x01\n" +
-	"\x06Events\x12\x18\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"\xb5\x02\n" +
+	"\x05Event\x12\x18\n" +
 	"\aeventID\x18\x01 \x01(\tR\aeventID\x12\x1c\n" +
 	"\tdiscoteca\x18\x02 \x01(\tR\tdiscoteca\x12\"\n" +
 	"\fnombreEvento\x18\x03 \x01(\tR\fnombreEvento\x12\x1c\n" +
 	"\tcategoria\x18\x04 \x01(\tR\tcategoria\x12\x16\n" +
 	"\x06comuna\x18\x05 \x01(\tR\x06comuna\x12\x16\n" +
 	"\x06precio\x18\x06 \x01(\x05R\x06precio\x12\x14\n" +
-	"\x05stock\x18\a \x01(\x05R\x05stock\x12 \n" +
-	"\vfechaEvento\x18\b \x01(\tR\vfechaEvento\"q\n" +
+	"\x05stock\x18\a \x01(\x05R\x05stock\x12\x1e\n" +
+	"\n" +
+	"spendStock\x18\b \x01(\x05R\n" +
+	"spendStock\x12 \n" +
+	"\vfechaEvento\x18\t \x01(\tR\vfechaEvento\x12*\n" +
+	"\x10fechaPublicacion\x18\n" +
+	" \x01(\tR\x10fechaPublicacion\"p\n" +
 	"\x11GetEventsResponse\x12\x16\n" +
 	"\x06succes\x18\x01 \x01(\bR\x06succes\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\x12*\n" +
-	"\x06events\x18\x03 \x03(\v2\x12.pbConsumer.EventsR\x06events\"\x86\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12)\n" +
+	"\x06events\x18\x03 \x03(\v2\x11.pbConsumer.EventR\x06events\"\x86\x01\n" +
 	"\x14PurchaseEventRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x18\n" +
 	"\aeventID\x18\x02 \x01(\tR\aeventID\x12$\n" +
@@ -402,13 +423,13 @@ func file_Broker_proto_pbConsumer_proto_rawDescGZIP() []byte {
 var file_Broker_proto_pbConsumer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_Broker_proto_pbConsumer_proto_goTypes = []any{
 	(*GetEventsRequest)(nil),      // 0: pbConsumer.GetEventsRequest
-	(*Events)(nil),                // 1: pbConsumer.Events
+	(*Event)(nil),                 // 1: pbConsumer.Event
 	(*GetEventsResponse)(nil),     // 2: pbConsumer.GetEventsResponse
 	(*PurchaseEventRequest)(nil),  // 3: pbConsumer.PurchaseEventRequest
 	(*PurchaseEventResponse)(nil), // 4: pbConsumer.PurchaseEventResponse
 }
 var file_Broker_proto_pbConsumer_proto_depIdxs = []int32{
-	1, // 0: pbConsumer.GetEventsResponse.events:type_name -> pbConsumer.Events
+	1, // 0: pbConsumer.GetEventsResponse.events:type_name -> pbConsumer.Event
 	0, // 1: pbConsumer.Consumer.GetEvents:input_type -> pbConsumer.GetEventsRequest
 	3, // 2: pbConsumer.Consumer.PurchaseEvent:input_type -> pbConsumer.PurchaseEventRequest
 	2, // 3: pbConsumer.Consumer.GetEvents:output_type -> pbConsumer.GetEventsResponse

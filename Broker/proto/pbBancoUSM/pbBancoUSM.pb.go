@@ -21,6 +21,86 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Empty struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{0}
+}
+
+type IsAliveResponde struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IsAlive       bool                   `protobuf:"varint,1,opt,name=isAlive,proto3" json:"isAlive,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IsAliveResponde) Reset() {
+	*x = IsAliveResponde{}
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IsAliveResponde) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IsAliveResponde) ProtoMessage() {}
+
+func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IsAliveResponde.ProtoReflect.Descriptor instead.
+func (*IsAliveResponde) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *IsAliveResponde) GetIsAlive() bool {
+	if x != nil {
+		return x.IsAlive
+	}
+	return false
+}
+
 type PaymentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
@@ -32,7 +112,7 @@ type PaymentRequest struct {
 
 func (x *PaymentRequest) Reset() {
 	*x = PaymentRequest{}
-	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +124,7 @@ func (x *PaymentRequest) String() string {
 func (*PaymentRequest) ProtoMessage() {}
 
 func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[0]
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +137,7 @@ func (x *PaymentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentRequest.ProtoReflect.Descriptor instead.
 func (*PaymentRequest) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{0}
+	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PaymentRequest) GetUuid() string {
@@ -91,7 +171,7 @@ type PaymentResponse struct {
 
 func (x *PaymentResponse) Reset() {
 	*x = PaymentResponse{}
-	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -103,7 +183,7 @@ func (x *PaymentResponse) String() string {
 func (*PaymentResponse) ProtoMessage() {}
 
 func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[1]
+	mi := &file_Broker_proto_pbBancoUSM_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -116,7 +196,7 @@ func (x *PaymentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentResponse.ProtoReflect.Descriptor instead.
 func (*PaymentResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{1}
+	return file_Broker_proto_pbBancoUSM_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PaymentResponse) GetSuccess() bool {
@@ -138,15 +218,19 @@ var File_Broker_proto_pbBancoUSM_proto protoreflect.FileDescriptor
 const file_Broker_proto_pbBancoUSM_proto_rawDesc = "" +
 	"\n" +
 	"\x1dBroker/proto/pbBancoUSM.proto\x12\n" +
-	"pbBancoUSM\"b\n" +
+	"pbBancoUSM\"\a\n" +
+	"\x05Empty\"+\n" +
+	"\x0fIsAliveResponde\x12\x18\n" +
+	"\aisAlive\x18\x01 \x01(\bR\aisAlive\"b\n" +
 	"\x0ePaymentRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x16\n" +
 	"\x06amount\x18\x02 \x01(\x05R\x06amount\x12$\n" +
 	"\rpaymentMethod\x18\x03 \x01(\tR\rpaymentMethod\"E\n" +
 	"\x0fPaymentResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2U\n" +
-	"\bBancoUSM\x12I\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\x95\x01\n" +
+	"\bBancoUSM\x12>\n" +
+	"\fCheckIsAlive\x12\x11.pbBancoUSM.Empty\x1a\x1b.pbBancoUSM.IsAliveResponde\x12I\n" +
 	"\x0eProcessPayment\x12\x1a.pbBancoUSM.PaymentRequest\x1a\x1b.pbBancoUSM.PaymentResponseB\x0eZ\f./pbBancoUSMb\x06proto3"
 
 var (
@@ -161,16 +245,20 @@ func file_Broker_proto_pbBancoUSM_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbBancoUSM_proto_rawDescData
 }
 
-var file_Broker_proto_pbBancoUSM_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_Broker_proto_pbBancoUSM_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_Broker_proto_pbBancoUSM_proto_goTypes = []any{
-	(*PaymentRequest)(nil),  // 0: pbBancoUSM.PaymentRequest
-	(*PaymentResponse)(nil), // 1: pbBancoUSM.PaymentResponse
+	(*Empty)(nil),           // 0: pbBancoUSM.Empty
+	(*IsAliveResponde)(nil), // 1: pbBancoUSM.IsAliveResponde
+	(*PaymentRequest)(nil),  // 2: pbBancoUSM.PaymentRequest
+	(*PaymentResponse)(nil), // 3: pbBancoUSM.PaymentResponse
 }
 var file_Broker_proto_pbBancoUSM_proto_depIdxs = []int32{
-	0, // 0: pbBancoUSM.BancoUSM.ProcessPayment:input_type -> pbBancoUSM.PaymentRequest
-	1, // 1: pbBancoUSM.BancoUSM.ProcessPayment:output_type -> pbBancoUSM.PaymentResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: pbBancoUSM.BancoUSM.CheckIsAlive:input_type -> pbBancoUSM.Empty
+	2, // 1: pbBancoUSM.BancoUSM.ProcessPayment:input_type -> pbBancoUSM.PaymentRequest
+	1, // 2: pbBancoUSM.BancoUSM.CheckIsAlive:output_type -> pbBancoUSM.IsAliveResponde
+	3, // 3: pbBancoUSM.BancoUSM.ProcessPayment:output_type -> pbBancoUSM.PaymentResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -187,7 +275,7 @@ func file_Broker_proto_pbBancoUSM_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbBancoUSM_proto_rawDesc), len(file_Broker_proto_pbBancoUSM_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -8,14 +8,6 @@ service Producer {
     rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse);
 }
 
-message Empty {
-
-}
-
-message IsAliveResponde {
-    bool isAlive = 1;
-}
-
 message PublishEventRequest {
     string uuid = 1;
     string evento_id = 2;
@@ -26,7 +18,6 @@ message PublishEventRequest {
     int32 precio = 7;
     int32 stock = 8;
     string fecha_evento = 9;
-    string fecha_publicacion = 10;
 }
 
 message PublishEventResponse {

@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	BancoUSM_CheckIsAlive_FullMethodName   = "/pbBancoUSM.BancoUSM/CheckIsAlive"
 	BancoUSM_ProcessPayment_FullMethodName = "/pbBancoUSM.BancoUSM/ProcessPayment"
 )
 
@@ -26,6 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BancoUSMClient interface {
+	CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error)
 	ProcessPayment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
 }
 
@@ -35,6 +37,16 @@ type bancoUSMClient struct {
 
 func NewBancoUSMClient(cc grpc.ClientConnInterface) BancoUSMClient {
 	return &bancoUSMClient{cc}
+}
+
+func (c *bancoUSMClient) CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsAliveResponde)
+	err := c.cc.Invoke(ctx, BancoUSM_CheckIsAlive_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *bancoUSMClient) ProcessPayment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error) {
@@ -51,6 +63,7 @@ func (c *bancoUSMClient) ProcessPayment(ctx context.Context, in *PaymentRequest,
 // All implementations must embed UnimplementedBancoUSMServer
 // for forward compatibility.
 type BancoUSMServer interface {
+	CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error)
 	ProcessPayment(context.Context, *PaymentRequest) (*PaymentResponse, error)
 	mustEmbedUnimplementedBancoUSMServer()
 }
@@ -62,6 +75,9 @@ type BancoUSMServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBancoUSMServer struct{}
 
+func (UnimplementedBancoUSMServer) CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckIsAlive not implemented")
+}
 func (UnimplementedBancoUSMServer) ProcessPayment(context.Context, *PaymentRequest) (*PaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessPayment not implemented")
 }
@@ -84,6 +100,24 @@ func RegisterBancoUSMServer(s grpc.ServiceRegistrar, srv BancoUSMServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&BancoUSM_ServiceDesc, srv)
+}
+
+func _BancoUSM_CheckIsAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BancoUSMServer).CheckIsAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BancoUSM_CheckIsAlive_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BancoUSMServer).CheckIsAlive(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _BancoUSM_ProcessPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -111,6 +145,10 @@ var BancoUSM_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pbBancoUSM.BancoUSM",
 	HandlerType: (*BancoUSMServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CheckIsAlive",
+			Handler:    _BancoUSM_CheckIsAlive_Handler,
+		},
 		{
 			MethodName: "ProcessPayment",
 			Handler:    _BancoUSM_ProcessPayment_Handler,

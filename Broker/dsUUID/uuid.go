@@ -1,4 +1,4 @@
-package dsuuid
+package dsUUID
 
 import (
 	"fmt"

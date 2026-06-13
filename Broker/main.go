@@ -2,338 +2,66 @@ package main
 
 import (
 	"context"
+	"sync"
+	"time"
 	"log"
 	"net"
+	"fmt"
 	"os"
-	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/proto"
 
-	dsConextionManager "Broker/dsConexionManager"
-	dsRegisterMap "Broker/dsRegisterMap"
+	DBManager "Broker/DBManager"
+	BancoManager "Broker/BancoManager"
+
 	dsUUID "Broker/dsUUID"
-	pbRegisterAuth "Broker/proto/pbRegisterAuth"
+	dsRegisterMap "Broker/dsRegisterMap"
+
+	pbBroker "Broker/proto/pbBroker"
+	pbDynamoDB "Broker/proto/pbDynamoDB"
 	pbProducer "Broker/proto/pbProducer"
 	pbConsumer "Broker/proto/pbConsumer"
 )
 
 type Broker struct {
-	// Registered users and productors
-	trustedConexions       *dsRegisterMap.RegisterMap
-	authenticatedConexions *dsRegisterMap.RegisterMap
+	mu sync.Mutex
+	DB *DBManager.DBManager
+	BANCO *BancoManager.BancoUSM
 
-	bancoUSM       *dsConextionManager.BancoUSM
-	dynamoDBClient *dsConextionManager.DynamoDB
+	TruestedProducers *dsRegisterMap.RegisterMap
 }
 
-type RegisterAuthServer struct {
-	pbRegisterAuth.UnimplementedRegisterAuthServer
-	broker *Broker
+type BrokerServer struct {
+	Broker *Broker
+	pbBroker.UnimplementedBrokerServer
+}
+
+type ProducerServer struct {
+	Broker *Broker
+	pbProducer.UnimplementedProducerServer
 }
 
 type ConsumerServer struct {
 	pbConsumer.UnimplementedConsumerServer
-	broker *Broker
+	Broker *Broker
 }
 
-type ProducerServer struct {
-	pbProducer.UnimplementedProducerServer
-	broker *Broker
-}
-
-type Event struct {
-	Evento_id         string
-	Discoteca         string
-	Nombre_evento     string
-	Categoria         string
-	Comuna            string
-	Precio            int
-	Stock             int
-	Fecha_evento      string
-	Fecha_publicacion string
-}
-
-/*
-Registra una nueva conexion al servidor
-*/
-func (s *RegisterAuthServer) Register(ctx context.Context, req *pbRegisterAuth.RegisterRequest) (*pbRegisterAuth.RegisterResponse, error) {
-	if req.Type != "consumer" && req.Type != "producer" && req.Type != "banco" && req.Type != "DB" {
-		log.Println("Invalid type. Must be 'consumer' or 'producer'")
-		return &pbRegisterAuth.RegisterResponse{
-			Success: false,
-			Message: "Invalid type. Must be 'consumer' or 'producer'",
-		}, nil
-	}
-
-	key := dsUUID.NewUUID()
-	for s.broker.trustedConexions.Exists(key.String()) {
-		key = dsUUID.NewUUID()
-	}
-	s.broker.trustedConexions.Add(key.String(), req.Username)
-
-	log.Println(req.Username + " Register successfuly")
-	return &pbRegisterAuth.RegisterResponse{
-		Uuid:    key.String(),
-		Success: true,
-		Message: "Registration successful",
-	}, nil
-}
-
-/*
-Authenticate()
-
-Autentica a un producto o consumidor registrado en el sistema.
-*/
-func (s *RegisterAuthServer) Authenticate(ctx context.Context, req *pbRegisterAuth.AuthRequest) (*pbRegisterAuth.AuthResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println(req.Uuid + " is not registered")
-		return &pbRegisterAuth.AuthResponse{
-			Success: false,
-			Message: "You are not registered",
-		}, nil
-	}
-
-	if s.broker.authenticatedConexions.Exists(req.Uuid) {
-		return &pbRegisterAuth.AuthResponse{
-			Success: true,
-			Message: "You are already Authenticated",
-		}, nil
-	}
-
-	s.broker.authenticatedConexions.Add(req.Uuid, req.Username)
-	log.Println(req.Username + " Authenticated successful")
-
-	return &pbRegisterAuth.AuthResponse{
-		Success: true,
-		Message: "Authenticated successful",
-	}, nil
-}
-
-func (s *RegisterAuthServer) RegisterNode(ctx context.Context, req *pbRegisterAuth.RegisterNodeRequest) (*pbRegisterAuth.RegisterNodeResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println("Recive a Untrusted Node Request")
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
-		log.Println("Recive a not authenticated Node Request")
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.dynamoDBClient.AddConection(req.Direction) {
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "Fail to create Conection",
-		}, nil
-	}
-
-	return &pbRegisterAuth.RegisterNodeResponse{
-		Succes:  true,
-		Message: "Conection Stable",
-	}, nil
-}
-
-func (s *RegisterAuthServer) RegisterBanco(ctx context.Context, req *pbRegisterAuth.RegisterNodeRequest) (*pbRegisterAuth.RegisterNodeResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println("Recive a Untrusted Node Request")
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
-		log.Println("Recive a not authenticated Node Request")
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.bancoUSM.Connect(req.Direction) {
-		return &pbRegisterAuth.RegisterNodeResponse{
-			Succes:  false,
-			Message: "Fail to create Conection",
-		}, nil
-	}
-
-	return &pbRegisterAuth.RegisterNodeResponse{
-		Succes:  true,
-		Message: "Conection Stable",
-	}, nil
-
-}
-
-func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.PublishEventRequest) (*pbProducer.PublishEventResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println("Recive a Untrusted Node Request")
-		return &pbProducer.PublishEventResponse{
-			Success: false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
-		log.Println("Recive a not authenticated Node Request")
-		return &pbProducer.PublishEventResponse{
-			Success: false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	var event Event
-	event.Evento_id = req.EventoId
-	event.Discoteca = req.Discoteca
-	event.Nombre_evento = req.NombreEvento
-	event.Categoria = req.Categoria
-	event.Comuna = req.Comuna
-	event.Precio = int(req.Precio)
-	event.Stock = int(req.Stock)
-	event.Fecha_evento = req.FechaEvento
-	event.Fecha_publicacion = time.Now().Format(time.RFC3339)
-
-	// Validación
-	if event.Precio <= 0 || event.Stock <= 0 {
-		return &pbProducer.PublishEventResponse{
-			Success: false,
-			Message: "Invalid event data",
-		}, nil
-	}
-
-	// Publish event to DynamoDB
-	// TODO: Check is evento_id is unique.
-	log.Printf("Publishing Event %s to DynamoDB", event.Evento_id)
-
-	return &pbProducer.PublishEventResponse{
-		Success: true,
-		Message: "Event published successfully",
-	}, nil
-}
-
-func (s *ConsumerServer) GetEvents(ctx context.Context, req *pbConsumer.GetEventsRequest) (*pbConsumer.GetEventsResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println("Recive a Untrusted Node Request")
-		return &pbConsumer.GetEventsResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
-		log.Println("Recive a not authenticated Node Request")
-		return &pbConsumer.GetEventsResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	// Get events from DynamoDB
-	log.Print("Geting all events from DynamoDB :(")
-
-	return &pbConsumer.GetEventsResponse{
-		Succes:  true,
-		Message: "Events retrieved successfully",
-		Events: []*pbConsumer.Events{
-			{
-				EventID:      "1",
-				Discoteca:    "Discoteca A",
-				NombreEvento: "Evento A",
-				Categoria:    "Categoria A",
-				Comuna:       "Comuna A",
-				Precio:       10000,
-				Stock:        100,
-				FechaEvento:  time.Now().Format(time.RFC3339),
-			},
-		},
-	}, nil
-}
-
-func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.PurchaseEventRequest) (*pbConsumer.PurchaseEventResponse, error) {
-	if !s.broker.trustedConexions.Exists(req.Uuid) {
-		log.Println("Recive a Untrusted Node Request")
-		return &pbConsumer.PurchaseEventResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	if !s.broker.authenticatedConexions.Exists(req.Uuid) {
-		log.Println("Recive a not authenticated Node Request")
-		return &pbConsumer.PurchaseEventResponse{
-			Succes:  false,
-			Message: "403 forbidden",
-		}, nil
-	}
-
-	// TODO: Get Event from DynamoDB and check if it exists and if there is stock available.
-
-	log.Printf("Processing payment for Event %s", req.EventID)
-	success, response, err := s.broker.bancoUSM.ProcessPayment(
-		req.Uuid,
-		5000, // TODO: Get price from event
-		req.PaymentMethod,
-	)
-
-	if err != nil {
-		log.Printf("Error processing payment: %v", err)
-		return &pbConsumer.PurchaseEventResponse{
-			Succes:  false,
-			Message: "Payment processing failed",
-		}, nil
-	}
-
-	if !success {
-		log.Printf("Payment failed: %s", response)
-		return &pbConsumer.PurchaseEventResponse{
-			Succes:  false,
-			Message: "Payment failed: " + response,
-		}, nil
-	}
-
-	// TODO: Add unique ticket id
-	ticket := "unique"
-
-	log.Printf("Payment successful for Event %s", req.EventID)
-	return &pbConsumer.PurchaseEventResponse{
-		Succes:  true,
-		Message: "Purchase successful",
-		TicketID:   ticket,
-	}, nil
-}
-
-func TicketsGenerator() {
-
-}
-
-func DataStorage() {
-
-}
-
-func DataRestore() {
-
-}
-
-func StartServers(broker *Broker) {
+func startServer(broker *Broker) {
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	pbRegisterAuth.RegisterRegisterAuthServer(grpcServer, &RegisterAuthServer{
-		broker: broker,
+	pbBroker.RegisterBrokerServer(grpcServer, &BrokerServer{
+		Broker: broker,
 	})
 	pbProducer.RegisterProducerServer(grpcServer, &ProducerServer{
-		broker: broker,
+		Broker: broker,
 	})
 	pbConsumer.RegisterConsumerServer(grpcServer, &ConsumerServer{
-		broker: broker,
+		Broker: broker,
 	})
 
 	log.Printf("Servers is listening on %s", listener.Addr().String())
@@ -342,48 +70,202 @@ func StartServers(broker *Broker) {
 	}
 }
 
-func (s *Broker) InitTables() {
-	for !s.dynamoDBClient.CreateTable("Eventos") {
-		log.Println("Failed to create table, retrying in 2 seconds...")
-		time.Sleep(2 * time.Second)
+func (s *BrokerServer) CheckIsAlive(ctx context.Context, req *pbBroker.Empty) (*pbBroker.IsAliveResponde, error) {
+	return &pbBroker.IsAliveResponde{
+		IsAlive: true,
+	}, nil
+}
+
+func (s *Broker) AddPublisher(IP string, UUID *string) (bool, *string) {
+	if UUID != nil {
+		if !s.TruestedProducers.Exists(*UUID) {
+			log.Printf("[BROKER] Recive a untrusted Producer (%s)", IP)
+			return false, nil
+		} else {
+			log.Panicf("[BROKER] Got a Producer Back (%s)", IP)
+			return true, UUID
+		}
 	}
 
-	for !s.dynamoDBClient.CreateTable("Tickets") {
-		log.Println("Failed to create table, retrying in 2 seconds...")
-		time.Sleep(2 * time.Second)
+	var newUUID = dsUUID.NewUUID().String()
+	s.TruestedProducers.Add(newUUID, IP)
+
+	log.Printf("[BROKER] Added a new Producer (%s)", IP)
+
+	return true, &newUUID
+}
+
+func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeRequest) (*pbBroker.HandshakeResponse, error) {
+	s.Broker.mu.Lock()
+	defer s.Broker.mu.Unlock()
+
+	IP := req.Direction
+	log.Printf("Got Handshake Request from: %s", IP)
+
+	var success = false
+	var key *string
+	switch req.WhatIAm {
+	case "NODE":
+		success = s.Broker.DB.AddConection(IP)
+	case "BANCO":
+		success = s.Broker.BANCO.Connect(IP)
+	case "PRODUCTOR":
+		success, key = s.Broker.AddPublisher(IP, req.Uuid)
+	case "CONSUMIDOR":
+	
+	}
+
+	if !success {
+		log.Printf("Handshake rejected or fail: %s", req.WhatIAm)
+		return &pbBroker.HandshakeResponse{
+			Success: false,
+			UUID: key,
+		}, nil
+	}
+
+	log.Printf("Success Conecting to Node at: %s", IP)
+	return &pbBroker.HandshakeResponse{
+		Success: true,
+		UUID: key,
+	}, nil
+}
+
+func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.PublishEventRequest) (*pbProducer.PublishEventResponse, error) {
+	if !s.Broker.TruestedProducers.Exists(req.Uuid) {
+		log.Println("[BROKER-PROD] Recive a Untrusted Node Request")
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	var Event pbBroker.Event
+	Event.EventID 			= req.EventoId
+	Event.Discoteca 		= req.Discoteca
+	Event.NombreEvento 		= req.NombreEvento
+	Event.Categoria 		= req.Categoria
+	Event.Comuna 			= req.Comuna
+	Event.Precio 			= int32(req.Precio)
+	Event.Stock 			= int32(req.Stock)
+	Event.SpendStock		= int32(0)
+	Event.FechaEvento 		= req.FechaEvento
+	Event.FechaPublicacion 	= time.Now().Format(time.RFC3339)
+
+	// Validación
+	if Event.Precio <= 0 || Event.Stock <= 0 {
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "Invalid event data",
+		}, nil
+	}
+
+	// Publish event to DynamoDB
+	item, success := s.Broker.DB.GetItem("Eventos", Event.EventID)
+	if success == false {
+		log.Printf("[BROKER-PROD] Could not verify if exists: %s", Event.EventID)
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "Could not verify if exists",
+		}, nil
+	}
+
+	if item.Exists {
+		log.Printf("[BROKER-PROD] Event Already Publish: %s", Event.EventID)
+		return &pbProducer.PublishEventResponse{
+			Success: true,
+			Message: "Event Already Publish",
+		}, nil
+	}
+
+	sendData, err := proto.Marshal(&Event)
+	if err != nil {
+		log.Printf("[BROKER-PROD] Unable to Marshal Event, err: %v", err)
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "Unable to Marshal Event",
+		}, err
+	}
+
+	success = s.Broker.DB.PutItem("Eventos", Event.EventID, sendData)
+	if (!success) {
+		log.Printf("[BROKER-PROD] Fail to Store Event %s", Event.EventID)
+		return &pbProducer.PublishEventResponse{
+			Success: false,
+			Message: "Fail to store event ",
+		}, nil
+	}
+
+	log.Printf("[BROKER-PROD] Event %s Published Successfully", Event.EventID)
+	return &pbProducer.PublishEventResponse{
+		Success: true,
+		Message: "Event Published Successfully",
+	}, nil
+}
+
+func (s *Broker) InitTables() {
+	for !s.DB.CreateTable("Eventos") {
+		log.Println("Failed to create table, retrying in 5 seconds...")
+		time.Sleep(5 * time.Second)
+	}
+
+	for !s.DB.CreateTable("Tickets") {
+		log.Println("Failed to create table, retrying in 5 seconds...")
+		time.Sleep(5 * time.Second)
+	}
+}
+
+func (s *Broker) TestDB() {
+	for i := 0; i < 10; i++ {
+		data := pbBroker.Data{
+			Data: int32(i),
+		}
+
+		item, err := proto.Marshal(&data)
+		if err != nil {
+			log.Panicln("What")
+		}
+
+		for !s.DB.PutItem("Eventos", fmt.Sprintf("Key-%d", i), item) {
+			log.Println("Failed to put item, retrying in 5 seconds...")
+			time.Sleep(5 * time.Second)
+		}
+	}
+
+	for i := 0; i < 10; i++ {
+		var item *pbDynamoDB.Item
+		success := false
+		for !success {
+			item, success = s.DB.GetItem("Eventos", fmt.Sprintf("Key-%d", i))
+			time.Sleep(5 * time.Second)
+		}
+
+		var value pbBroker.Data
+		proto.Unmarshal(item.Value, &value)
+
+		if int(value.Data) != i {
+			log.Println("Is not the same")
+			i--
+			continue
+		}
+		time.Sleep(10 * time.Second)
 	}
 }
 
 func serverBackground() {
 	broker := &Broker{
-		trustedConexions:       dsRegisterMap.NewRegisterMap(),
-		authenticatedConexions: dsRegisterMap.NewRegisterMap(),
+		DB: DBManager.CreateDBManager(3, 2, 2),
+		BANCO: BancoManager.CreateBancoManager(),
 
-		bancoUSM:       new(dsConextionManager.BancoUSM),
-		dynamoDBClient: new(dsConextionManager.DynamoDB),
+		TruestedProducers: dsRegisterMap.NewRegisterMap(),
 	}
 
-	broker.dynamoDBClient.N = 3
-	broker.dynamoDBClient.R = 2
-	broker.dynamoDBClient.W = 2
-	broker.dynamoDBClient.Nodes = make(map[string]dsConextionManager.Node)
-
-	go StartServers(broker)
-	time.Sleep(2 * time.Second)
+	go startServer(broker)
 
 	broker.InitTables()
 
 	forever := make(chan bool)
 	log.Printf("Waiting for messages. To exit press CTRL+C")
 	<-forever
-}
-
-func NewGRPCClient(address string) *grpc.ClientConn {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Failed to connect to %s: %v", address, err)
-	}
-	return conn
 }
 
 func main() {

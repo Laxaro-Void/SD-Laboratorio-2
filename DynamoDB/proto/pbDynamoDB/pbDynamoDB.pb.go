@@ -361,10 +361,62 @@ func (x *GetItemRequest) GetKey() string {
 	return ""
 }
 
+type Item struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         []byte                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Exists        bool                   `protobuf:"varint,2,opt,name=exists,proto3" json:"exists,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Item) Reset() {
+	*x = Item{}
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Item) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Item) ProtoMessage() {}
+
+func (x *Item) ProtoReflect() protoreflect.Message {
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Item.ProtoReflect.Descriptor instead.
+func (*Item) Descriptor() ([]byte, []int) {
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Item) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *Item) GetExists() bool {
+	if x != nil {
+		return x.Exists
+	}
+	return false
+}
+
 type GetItemResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Value         *Item                  `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -372,7 +424,7 @@ type GetItemResponse struct {
 
 func (x *GetItemResponse) Reset() {
 	*x = GetItemResponse{}
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[7]
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +436,7 @@ func (x *GetItemResponse) String() string {
 func (*GetItemResponse) ProtoMessage() {}
 
 func (x *GetItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[7]
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +449,7 @@ func (x *GetItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetItemResponse.ProtoReflect.Descriptor instead.
 func (*GetItemResponse) Descriptor() ([]byte, []int) {
-	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{7}
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetItemResponse) GetSuccess() bool {
@@ -407,7 +459,7 @@ func (x *GetItemResponse) GetSuccess() bool {
 	return false
 }
 
-func (x *GetItemResponse) GetValue() []byte {
+func (x *GetItemResponse) GetValue() *Item {
 	if x != nil {
 		return x.Value
 	}
@@ -421,28 +473,29 @@ func (x *GetItemResponse) GetMessage() string {
 	return ""
 }
 
-type SyncNodeRequest struct {
+type Table struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          map[string][]byte      `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Data          map[string][]byte      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SyncNodeRequest) Reset() {
-	*x = SyncNodeRequest{}
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[8]
+func (x *Table) Reset() {
+	*x = Table{}
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SyncNodeRequest) String() string {
+func (x *Table) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SyncNodeRequest) ProtoMessage() {}
+func (*Table) ProtoMessage() {}
 
-func (x *SyncNodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[8]
+func (x *Table) ProtoReflect() protoreflect.Message {
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -453,19 +506,70 @@ func (x *SyncNodeRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SyncNodeRequest.ProtoReflect.Descriptor instead.
-func (*SyncNodeRequest) Descriptor() ([]byte, []int) {
-	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{8}
+// Deprecated: Use Table.ProtoReflect.Descriptor instead.
+func (*Table) Descriptor() ([]byte, []int) {
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SyncNodeRequest) GetData() map[string][]byte {
+func (x *Table) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Table) GetData() map[string][]byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type SyncNodeResponse struct {
+type SyncAllDataRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AllData       []*Table               `protobuf:"bytes,1,rep,name=allData,proto3" json:"allData,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SyncAllDataRequest) Reset() {
+	*x = SyncAllDataRequest{}
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SyncAllDataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SyncAllDataRequest) ProtoMessage() {}
+
+func (x *SyncAllDataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SyncAllDataRequest.ProtoReflect.Descriptor instead.
+func (*SyncAllDataRequest) Descriptor() ([]byte, []int) {
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *SyncAllDataRequest) GetAllData() []*Table {
+	if x != nil {
+		return x.AllData
+	}
+	return nil
+}
+
+type SyncAllDataResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
@@ -473,21 +577,21 @@ type SyncNodeResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SyncNodeResponse) Reset() {
-	*x = SyncNodeResponse{}
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[9]
+func (x *SyncAllDataResponse) Reset() {
+	*x = SyncAllDataResponse{}
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SyncNodeResponse) String() string {
+func (x *SyncAllDataResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SyncNodeResponse) ProtoMessage() {}
+func (*SyncAllDataResponse) ProtoMessage() {}
 
-func (x *SyncNodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[9]
+func (x *SyncAllDataResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -498,19 +602,19 @@ func (x *SyncNodeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SyncNodeResponse.ProtoReflect.Descriptor instead.
-func (*SyncNodeResponse) Descriptor() ([]byte, []int) {
-	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{9}
+// Deprecated: Use SyncAllDataResponse.ProtoReflect.Descriptor instead.
+func (*SyncAllDataResponse) Descriptor() ([]byte, []int) {
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SyncNodeResponse) GetSuccess() bool {
+func (x *SyncAllDataResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-func (x *SyncNodeResponse) GetMessage() string {
+func (x *SyncAllDataResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
@@ -520,7 +624,7 @@ func (x *SyncNodeResponse) GetMessage() string {
 type GetAllDataResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Data          map[string][]byte      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	AllData       []*Table               `protobuf:"bytes,2,rep,name=allData,proto3" json:"allData,omitempty"`
 	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -528,7 +632,7 @@ type GetAllDataResponse struct {
 
 func (x *GetAllDataResponse) Reset() {
 	*x = GetAllDataResponse{}
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[10]
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -540,7 +644,7 @@ func (x *GetAllDataResponse) String() string {
 func (*GetAllDataResponse) ProtoMessage() {}
 
 func (x *GetAllDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[10]
+	mi := &file_DynamoDB_proto_pbDynamoDB_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -553,7 +657,7 @@ func (x *GetAllDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllDataResponse.ProtoReflect.Descriptor instead.
 func (*GetAllDataResponse) Descriptor() ([]byte, []int) {
-	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{10}
+	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetAllDataResponse) GetSuccess() bool {
@@ -563,9 +667,9 @@ func (x *GetAllDataResponse) GetSuccess() bool {
 	return false
 }
 
-func (x *GetAllDataResponse) GetData() map[string][]byte {
+func (x *GetAllDataResponse) GetAllData() []*Table {
 	if x != nil {
-		return x.Data
+		return x.AllData
 	}
 	return nil
 }
@@ -603,32 +707,35 @@ const file_DynamoDB_proto_pbDynamoDB_proto_rawDesc = "" +
 	"\x0eGetItemRequest\x12\x1d\n" +
 	"\n" +
 	"table_name\x18\x01 \x01(\tR\ttableName\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\"[\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\"4\n" +
+	"\x04Item\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\fR\x05value\x12\x16\n" +
+	"\x06exists\x18\x02 \x01(\bR\x06exists\"m\n" +
 	"\x0fGetItemResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12&\n" +
+	"\x05value\x18\x02 \x01(\v2\x10.pbDynamoDB.ItemR\x05value\x12\x18\n" +
 	"\amessage\x18\x03 \x01(\tR\amessage\"\x85\x01\n" +
-	"\x0fSyncNodeRequest\x129\n" +
-	"\x04data\x18\x01 \x03(\v2%.pbDynamoDB.SyncNodeRequest.DataEntryR\x04data\x1a7\n" +
+	"\x05Table\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12/\n" +
+	"\x04data\x18\x02 \x03(\v2\x1b.pbDynamoDB.Table.DataEntryR\x04data\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value:\x028\x01\"F\n" +
-	"\x10SyncNodeResponse\x12\x18\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value:\x028\x01\"A\n" +
+	"\x12SyncAllDataRequest\x12+\n" +
+	"\aallData\x18\x01 \x03(\v2\x11.pbDynamoDB.TableR\aallData\"I\n" +
+	"\x13SyncAllDataResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xbf\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"u\n" +
 	"\x12GetAllDataResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12<\n" +
-	"\x04data\x18\x02 \x03(\v2(.pbDynamoDB.GetAllDataResponse.DataEntryR\x04data\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value:\x028\x012\xaa\x03\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12+\n" +
+	"\aallData\x18\x02 \x03(\v2\x11.pbDynamoDB.TableR\aallData\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage2\xb3\x03\n" +
 	"\bDynamoDB\x12>\n" +
 	"\fCheckIsAlive\x12\x11.pbDynamoDB.Empty\x1a\x1b.pbDynamoDB.IsAliveResponde\x12N\n" +
 	"\vCreateTable\x12\x1e.pbDynamoDB.CreateTableRequest\x1a\x1f.pbDynamoDB.CreateTableResponse\x12B\n" +
 	"\aPutItem\x12\x1a.pbDynamoDB.PutItemRequest\x1a\x1b.pbDynamoDB.PutItemResponse\x12B\n" +
-	"\aGetItem\x12\x1a.pbDynamoDB.GetItemRequest\x1a\x1b.pbDynamoDB.GetItemResponse\x12E\n" +
-	"\bSyncNode\x12\x1b.pbDynamoDB.SyncNodeRequest\x1a\x1c.pbDynamoDB.SyncNodeResponse\x12?\n" +
+	"\aGetItem\x12\x1a.pbDynamoDB.GetItemRequest\x1a\x1b.pbDynamoDB.GetItemResponse\x12N\n" +
+	"\vSyncAllData\x12\x1e.pbDynamoDB.SyncAllDataRequest\x1a\x1f.pbDynamoDB.SyncAllDataResponse\x12?\n" +
 	"\n" +
 	"GetAllData\x12\x11.pbDynamoDB.Empty\x1a\x1e.pbDynamoDB.GetAllDataResponseB\x0eZ\f./pbDynamoDBb\x06proto3"
 
@@ -644,7 +751,7 @@ func file_DynamoDB_proto_pbDynamoDB_proto_rawDescGZIP() []byte {
 	return file_DynamoDB_proto_pbDynamoDB_proto_rawDescData
 }
 
-var file_DynamoDB_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_DynamoDB_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_DynamoDB_proto_pbDynamoDB_proto_goTypes = []any{
 	(*Empty)(nil),               // 0: pbDynamoDB.Empty
 	(*IsAliveResponde)(nil),     // 1: pbDynamoDB.IsAliveResponde
@@ -653,33 +760,36 @@ var file_DynamoDB_proto_pbDynamoDB_proto_goTypes = []any{
 	(*PutItemRequest)(nil),      // 4: pbDynamoDB.PutItemRequest
 	(*PutItemResponse)(nil),     // 5: pbDynamoDB.PutItemResponse
 	(*GetItemRequest)(nil),      // 6: pbDynamoDB.GetItemRequest
-	(*GetItemResponse)(nil),     // 7: pbDynamoDB.GetItemResponse
-	(*SyncNodeRequest)(nil),     // 8: pbDynamoDB.SyncNodeRequest
-	(*SyncNodeResponse)(nil),    // 9: pbDynamoDB.SyncNodeResponse
-	(*GetAllDataResponse)(nil),  // 10: pbDynamoDB.GetAllDataResponse
-	nil,                         // 11: pbDynamoDB.SyncNodeRequest.DataEntry
-	nil,                         // 12: pbDynamoDB.GetAllDataResponse.DataEntry
+	(*Item)(nil),                // 7: pbDynamoDB.Item
+	(*GetItemResponse)(nil),     // 8: pbDynamoDB.GetItemResponse
+	(*Table)(nil),               // 9: pbDynamoDB.Table
+	(*SyncAllDataRequest)(nil),  // 10: pbDynamoDB.SyncAllDataRequest
+	(*SyncAllDataResponse)(nil), // 11: pbDynamoDB.SyncAllDataResponse
+	(*GetAllDataResponse)(nil),  // 12: pbDynamoDB.GetAllDataResponse
+	nil,                         // 13: pbDynamoDB.Table.DataEntry
 }
 var file_DynamoDB_proto_pbDynamoDB_proto_depIdxs = []int32{
-	11, // 0: pbDynamoDB.SyncNodeRequest.data:type_name -> pbDynamoDB.SyncNodeRequest.DataEntry
-	12, // 1: pbDynamoDB.GetAllDataResponse.data:type_name -> pbDynamoDB.GetAllDataResponse.DataEntry
-	0,  // 2: pbDynamoDB.DynamoDB.CheckIsAlive:input_type -> pbDynamoDB.Empty
-	2,  // 3: pbDynamoDB.DynamoDB.CreateTable:input_type -> pbDynamoDB.CreateTableRequest
-	4,  // 4: pbDynamoDB.DynamoDB.PutItem:input_type -> pbDynamoDB.PutItemRequest
-	6,  // 5: pbDynamoDB.DynamoDB.GetItem:input_type -> pbDynamoDB.GetItemRequest
-	8,  // 6: pbDynamoDB.DynamoDB.SyncNode:input_type -> pbDynamoDB.SyncNodeRequest
-	0,  // 7: pbDynamoDB.DynamoDB.GetAllData:input_type -> pbDynamoDB.Empty
-	1,  // 8: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
-	3,  // 9: pbDynamoDB.DynamoDB.CreateTable:output_type -> pbDynamoDB.CreateTableResponse
-	5,  // 10: pbDynamoDB.DynamoDB.PutItem:output_type -> pbDynamoDB.PutItemResponse
-	7,  // 11: pbDynamoDB.DynamoDB.GetItem:output_type -> pbDynamoDB.GetItemResponse
-	9,  // 12: pbDynamoDB.DynamoDB.SyncNode:output_type -> pbDynamoDB.SyncNodeResponse
-	10, // 13: pbDynamoDB.DynamoDB.GetAllData:output_type -> pbDynamoDB.GetAllDataResponse
-	8,  // [8:14] is the sub-list for method output_type
-	2,  // [2:8] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	7,  // 0: pbDynamoDB.GetItemResponse.value:type_name -> pbDynamoDB.Item
+	13, // 1: pbDynamoDB.Table.data:type_name -> pbDynamoDB.Table.DataEntry
+	9,  // 2: pbDynamoDB.SyncAllDataRequest.allData:type_name -> pbDynamoDB.Table
+	9,  // 3: pbDynamoDB.GetAllDataResponse.allData:type_name -> pbDynamoDB.Table
+	0,  // 4: pbDynamoDB.DynamoDB.CheckIsAlive:input_type -> pbDynamoDB.Empty
+	2,  // 5: pbDynamoDB.DynamoDB.CreateTable:input_type -> pbDynamoDB.CreateTableRequest
+	4,  // 6: pbDynamoDB.DynamoDB.PutItem:input_type -> pbDynamoDB.PutItemRequest
+	6,  // 7: pbDynamoDB.DynamoDB.GetItem:input_type -> pbDynamoDB.GetItemRequest
+	10, // 8: pbDynamoDB.DynamoDB.SyncAllData:input_type -> pbDynamoDB.SyncAllDataRequest
+	0,  // 9: pbDynamoDB.DynamoDB.GetAllData:input_type -> pbDynamoDB.Empty
+	1,  // 10: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
+	3,  // 11: pbDynamoDB.DynamoDB.CreateTable:output_type -> pbDynamoDB.CreateTableResponse
+	5,  // 12: pbDynamoDB.DynamoDB.PutItem:output_type -> pbDynamoDB.PutItemResponse
+	8,  // 13: pbDynamoDB.DynamoDB.GetItem:output_type -> pbDynamoDB.GetItemResponse
+	11, // 14: pbDynamoDB.DynamoDB.SyncAllData:output_type -> pbDynamoDB.SyncAllDataResponse
+	12, // 15: pbDynamoDB.DynamoDB.GetAllData:output_type -> pbDynamoDB.GetAllDataResponse
+	10, // [10:16] is the sub-list for method output_type
+	4,  // [4:10] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_DynamoDB_proto_pbDynamoDB_proto_init() }
@@ -693,7 +803,7 @@ func file_DynamoDB_proto_pbDynamoDB_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_DynamoDB_proto_pbDynamoDB_proto_rawDesc), len(file_DynamoDB_proto_pbDynamoDB_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -23,21 +23,19 @@ const (
 	DynamoDB_CreateTable_FullMethodName  = "/pbDynamoDB.DynamoDB/CreateTable"
 	DynamoDB_PutItem_FullMethodName      = "/pbDynamoDB.DynamoDB/PutItem"
 	DynamoDB_GetItem_FullMethodName      = "/pbDynamoDB.DynamoDB/GetItem"
-	DynamoDB_SyncNode_FullMethodName     = "/pbDynamoDB.DynamoDB/SyncNode"
+	DynamoDB_SyncAllData_FullMethodName  = "/pbDynamoDB.DynamoDB/SyncAllData"
 	DynamoDB_GetAllData_FullMethodName   = "/pbDynamoDB.DynamoDB/GetAllData"
 )
 
 // DynamoDBClient is the client API for DynamoDB service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Service for Register and Authentication of Consumers, Productors
 type DynamoDBClient interface {
 	CheckIsAlive(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*IsAliveResponde, error)
 	CreateTable(ctx context.Context, in *CreateTableRequest, opts ...grpc.CallOption) (*CreateTableResponse, error)
 	PutItem(ctx context.Context, in *PutItemRequest, opts ...grpc.CallOption) (*PutItemResponse, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
-	SyncNode(ctx context.Context, in *SyncNodeRequest, opts ...grpc.CallOption) (*SyncNodeResponse, error)
+	SyncAllData(ctx context.Context, in *SyncAllDataRequest, opts ...grpc.CallOption) (*SyncAllDataResponse, error)
 	GetAllData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllDataResponse, error)
 }
 
@@ -89,10 +87,10 @@ func (c *dynamoDBClient) GetItem(ctx context.Context, in *GetItemRequest, opts .
 	return out, nil
 }
 
-func (c *dynamoDBClient) SyncNode(ctx context.Context, in *SyncNodeRequest, opts ...grpc.CallOption) (*SyncNodeResponse, error) {
+func (c *dynamoDBClient) SyncAllData(ctx context.Context, in *SyncAllDataRequest, opts ...grpc.CallOption) (*SyncAllDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncNodeResponse)
-	err := c.cc.Invoke(ctx, DynamoDB_SyncNode_FullMethodName, in, out, cOpts...)
+	out := new(SyncAllDataResponse)
+	err := c.cc.Invoke(ctx, DynamoDB_SyncAllData_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,14 +110,12 @@ func (c *dynamoDBClient) GetAllData(ctx context.Context, in *Empty, opts ...grpc
 // DynamoDBServer is the server API for DynamoDB service.
 // All implementations must embed UnimplementedDynamoDBServer
 // for forward compatibility.
-//
-// Service for Register and Authentication of Consumers, Productors
 type DynamoDBServer interface {
 	CheckIsAlive(context.Context, *Empty) (*IsAliveResponde, error)
 	CreateTable(context.Context, *CreateTableRequest) (*CreateTableResponse, error)
 	PutItem(context.Context, *PutItemRequest) (*PutItemResponse, error)
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
-	SyncNode(context.Context, *SyncNodeRequest) (*SyncNodeResponse, error)
+	SyncAllData(context.Context, *SyncAllDataRequest) (*SyncAllDataResponse, error)
 	GetAllData(context.Context, *Empty) (*GetAllDataResponse, error)
 	mustEmbedUnimplementedDynamoDBServer()
 }
@@ -143,8 +139,8 @@ func (UnimplementedDynamoDBServer) PutItem(context.Context, *PutItemRequest) (*P
 func (UnimplementedDynamoDBServer) GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetItem not implemented")
 }
-func (UnimplementedDynamoDBServer) SyncNode(context.Context, *SyncNodeRequest) (*SyncNodeResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncNode not implemented")
+func (UnimplementedDynamoDBServer) SyncAllData(context.Context, *SyncAllDataRequest) (*SyncAllDataResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncAllData not implemented")
 }
 func (UnimplementedDynamoDBServer) GetAllData(context.Context, *Empty) (*GetAllDataResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAllData not implemented")
@@ -242,20 +238,20 @@ func _DynamoDB_GetItem_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DynamoDB_SyncNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncNodeRequest)
+func _DynamoDB_SyncAllData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncAllDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DynamoDBServer).SyncNode(ctx, in)
+		return srv.(DynamoDBServer).SyncAllData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DynamoDB_SyncNode_FullMethodName,
+		FullMethod: DynamoDB_SyncAllData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DynamoDBServer).SyncNode(ctx, req.(*SyncNodeRequest))
+		return srv.(DynamoDBServer).SyncAllData(ctx, req.(*SyncAllDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -302,8 +298,8 @@ var DynamoDB_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DynamoDB_GetItem_Handler,
 		},
 		{
-			MethodName: "SyncNode",
-			Handler:    _DynamoDB_SyncNode_Handler,
+			MethodName: "SyncAllData",
+			Handler:    _DynamoDB_SyncAllData_Handler,
 		},
 		{
 			MethodName: "GetAllData",

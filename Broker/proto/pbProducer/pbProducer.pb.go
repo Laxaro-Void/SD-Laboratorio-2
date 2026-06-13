@@ -21,105 +21,24 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Empty struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Empty) Reset() {
-	*x = Empty{}
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Empty) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Empty) ProtoMessage() {}
-
-func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
-func (*Empty) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{0}
-}
-
-type IsAliveResponde struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IsAlive       bool                   `protobuf:"varint,1,opt,name=isAlive,proto3" json:"isAlive,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *IsAliveResponde) Reset() {
-	*x = IsAliveResponde{}
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *IsAliveResponde) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*IsAliveResponde) ProtoMessage() {}
-
-func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use IsAliveResponde.ProtoReflect.Descriptor instead.
-func (*IsAliveResponde) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *IsAliveResponde) GetIsAlive() bool {
-	if x != nil {
-		return x.IsAlive
-	}
-	return false
-}
-
 type PublishEventRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Uuid             string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	EventoId         string                 `protobuf:"bytes,2,opt,name=evento_id,json=eventoId,proto3" json:"evento_id,omitempty"`
-	Discoteca        string                 `protobuf:"bytes,3,opt,name=discoteca,proto3" json:"discoteca,omitempty"`
-	NombreEvento     string                 `protobuf:"bytes,4,opt,name=nombre_evento,json=nombreEvento,proto3" json:"nombre_evento,omitempty"`
-	Categoria        string                 `protobuf:"bytes,5,opt,name=categoria,proto3" json:"categoria,omitempty"`
-	Comuna           string                 `protobuf:"bytes,6,opt,name=comuna,proto3" json:"comuna,omitempty"`
-	Precio           int32                  `protobuf:"varint,7,opt,name=precio,proto3" json:"precio,omitempty"`
-	Stock            int32                  `protobuf:"varint,8,opt,name=stock,proto3" json:"stock,omitempty"`
-	FechaEvento      string                 `protobuf:"bytes,9,opt,name=fecha_evento,json=fechaEvento,proto3" json:"fecha_evento,omitempty"`
-	FechaPublicacion string                 `protobuf:"bytes,10,opt,name=fecha_publicacion,json=fechaPublicacion,proto3" json:"fecha_publicacion,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	EventoId      string                 `protobuf:"bytes,2,opt,name=evento_id,json=eventoId,proto3" json:"evento_id,omitempty"`
+	Discoteca     string                 `protobuf:"bytes,3,opt,name=discoteca,proto3" json:"discoteca,omitempty"`
+	NombreEvento  string                 `protobuf:"bytes,4,opt,name=nombre_evento,json=nombreEvento,proto3" json:"nombre_evento,omitempty"`
+	Categoria     string                 `protobuf:"bytes,5,opt,name=categoria,proto3" json:"categoria,omitempty"`
+	Comuna        string                 `protobuf:"bytes,6,opt,name=comuna,proto3" json:"comuna,omitempty"`
+	Precio        int32                  `protobuf:"varint,7,opt,name=precio,proto3" json:"precio,omitempty"`
+	Stock         int32                  `protobuf:"varint,8,opt,name=stock,proto3" json:"stock,omitempty"`
+	FechaEvento   string                 `protobuf:"bytes,9,opt,name=fecha_evento,json=fechaEvento,proto3" json:"fecha_evento,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PublishEventRequest) Reset() {
 	*x = PublishEventRequest{}
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[2]
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -131,7 +50,7 @@ func (x *PublishEventRequest) String() string {
 func (*PublishEventRequest) ProtoMessage() {}
 
 func (x *PublishEventRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[2]
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -144,7 +63,7 @@ func (x *PublishEventRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishEventRequest.ProtoReflect.Descriptor instead.
 func (*PublishEventRequest) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{2}
+	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PublishEventRequest) GetUuid() string {
@@ -210,13 +129,6 @@ func (x *PublishEventRequest) GetFechaEvento() string {
 	return ""
 }
 
-func (x *PublishEventRequest) GetFechaPublicacion() string {
-	if x != nil {
-		return x.FechaPublicacion
-	}
-	return ""
-}
-
 type PublishEventResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -227,7 +139,7 @@ type PublishEventResponse struct {
 
 func (x *PublishEventResponse) Reset() {
 	*x = PublishEventResponse{}
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[3]
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -239,7 +151,7 @@ func (x *PublishEventResponse) String() string {
 func (*PublishEventResponse) ProtoMessage() {}
 
 func (x *PublishEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbProducer_proto_msgTypes[3]
+	mi := &file_Broker_proto_pbProducer_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -252,7 +164,7 @@ func (x *PublishEventResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishEventResponse.ProtoReflect.Descriptor instead.
 func (*PublishEventResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{3}
+	return file_Broker_proto_pbProducer_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PublishEventResponse) GetSuccess() bool {
@@ -274,10 +186,7 @@ var File_Broker_proto_pbProducer_proto protoreflect.FileDescriptor
 const file_Broker_proto_pbProducer_proto_rawDesc = "" +
 	"\n" +
 	"\x1dBroker/proto/pbProducer.proto\x12\n" +
-	"pbProducer\"\a\n" +
-	"\x05Empty\"+\n" +
-	"\x0fIsAliveResponde\x12\x18\n" +
-	"\aisAlive\x18\x01 \x01(\bR\aisAlive\"\xbd\x02\n" +
+	"pbProducer\"\x90\x02\n" +
 	"\x13PublishEventRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1b\n" +
 	"\tevento_id\x18\x02 \x01(\tR\beventoId\x12\x1c\n" +
@@ -287,9 +196,7 @@ const file_Broker_proto_pbProducer_proto_rawDesc = "" +
 	"\x06comuna\x18\x06 \x01(\tR\x06comuna\x12\x16\n" +
 	"\x06precio\x18\a \x01(\x05R\x06precio\x12\x14\n" +
 	"\x05stock\x18\b \x01(\x05R\x05stock\x12!\n" +
-	"\ffecha_evento\x18\t \x01(\tR\vfechaEvento\x12+\n" +
-	"\x11fecha_publicacion\x18\n" +
-	" \x01(\tR\x10fechaPublicacion\"J\n" +
+	"\ffecha_evento\x18\t \x01(\tR\vfechaEvento\"J\n" +
 	"\x14PublishEventResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage2]\n" +
@@ -308,16 +215,14 @@ func file_Broker_proto_pbProducer_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbProducer_proto_rawDescData
 }
 
-var file_Broker_proto_pbProducer_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_Broker_proto_pbProducer_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_Broker_proto_pbProducer_proto_goTypes = []any{
-	(*Empty)(nil),                // 0: pbProducer.Empty
-	(*IsAliveResponde)(nil),      // 1: pbProducer.IsAliveResponde
-	(*PublishEventRequest)(nil),  // 2: pbProducer.PublishEventRequest
-	(*PublishEventResponse)(nil), // 3: pbProducer.PublishEventResponse
+	(*PublishEventRequest)(nil),  // 0: pbProducer.PublishEventRequest
+	(*PublishEventResponse)(nil), // 1: pbProducer.PublishEventResponse
 }
 var file_Broker_proto_pbProducer_proto_depIdxs = []int32{
-	2, // 0: pbProducer.Producer.PublishEvent:input_type -> pbProducer.PublishEventRequest
-	3, // 1: pbProducer.Producer.PublishEvent:output_type -> pbProducer.PublishEventResponse
+	0, // 0: pbProducer.Producer.PublishEvent:input_type -> pbProducer.PublishEventRequest
+	1, // 1: pbProducer.Producer.PublishEvent:output_type -> pbProducer.PublishEventResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -336,7 +241,7 @@ func file_Broker_proto_pbProducer_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbProducer_proto_rawDesc), len(file_Broker_proto_pbProducer_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

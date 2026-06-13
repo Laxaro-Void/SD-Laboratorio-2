@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "./pbBroker";
+package pbBroker;
+
+// Service for Register and Authentication of Consumers, Productors
+service Broker {
+    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
+    rpc Handshake(HandshakeRequest) returns (HandshakeResponse);
+}
+
+message Data {
+    int32 data = 1;
+}
+
+message Empty {
+
+}
+
+message IsAliveResponde {
+    bool isAlive = 1;
+}
+
+message HandshakeRequest {
+    string direction = 1;
+    string whatIAm = 2;
+    optional string uuid = 3;
+}
+
+message HandshakeResponse {
+    bool success = 1;
+    optional string UUID = 2;
+}

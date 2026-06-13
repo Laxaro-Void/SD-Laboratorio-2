@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package = "./pbProducer";
+package pbProducer;
+
+// Service for Register and Authentication of Consumers, Productors
+service Producer {
+    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
+    rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse);
+}
+
+message Empty {
+
+}
+
+message IsAliveResponde {
+    bool isAlive = 1;
+}
+
+message PublishEventRequest {
+    string uuid = 1;
+    string evento_id = 2;
+    string discoteca = 3;
+    string nombre_evento = 4;
+    string categoria = 5;
+    string comuna = 6;
+    int32 precio = 7;
+    int32 stock = 8;
+    string fecha_evento = 9;
+}
+
+message PublishEventResponse {
+    bool success = 1;
+    string message = 2;
+}

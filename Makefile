@@ -2,47 +2,45 @@
 build-protoc:
 	protoc --go_out=Banco/proto --go-grpc_out=Banco/proto Banco/proto/*.proto
 	protoc --go_out=Broker/proto --go-grpc_out=Broker/proto Broker/proto/*.proto
-	protoc --go_out=Consumidor/proto --go-grpc_out=Consumidor/proto Consumidor/proto/*.proto
-	protoc --go_out=Productor/proto --go-grpc_out=Productor/proto Productor/proto/*.proto
 	protoc --go_out=DynamoDB/proto --go-grpc_out=DynamoDB/proto DynamoDB/proto/*.proto
+	protoc --go_out=Productor/proto --go-grpc_out=Productor/proto Productor/proto/*.proto
+	protoc --go_out=Consumer/proto --go-grpc_out=Consumer/proto Consumer/proto/*.proto
 
-## Production
-VM1:
+run-broker:
+	sudo docker compose build broker
+	sudo docker compose up --remove-orphans broker
 
-VM2:
+stop-broker:
+	sudo docker compose stop broker
 
-VM3:
+run-banco:
+	sudo docker compose build banco
+	sudo docker compose up --remove-orphans banco
 
-VM4:
+run-node-1:
+	sudo docker compose build node1
+	sudo docker compose up --remove-orphans node1
 
+run-node-2:
+	sudo docker compose build node2
+	sudo docker compose up --remove-orphans node2
 
-## Localhost
-localhost-VM1:
-	sudo docker-compose -f compose.localhost.yaml build broker
-	sudo docker-compose -f compose.localhost.yaml up --remove-orphans broker
+run-node-3:
+	sudo docker compose build node3
+	sudo docker compose up --remove-orphans node3
 
-localhost-VM2:
-	sudo docker compose -f compose.localhost.yaml build productor1 productor2 productor3 productor4 dynamodb1
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor1
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor2
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor3
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d productor4
+stop-node-1:
+	sudo docker compose stop node1
 
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d dynamodb1
-	sudo docker compose -f compose.localhost.yaml logs -f productor1 productor2 productor3 productor4 dynamodb1
+stop-node-2:
+	sudo docker compose stop node2
 
-localhost-VM3:
-	sudo docker-compose -f compose.localhost.yaml build consumidor1 consumidor2 dynamodb2
+stop-node-3:
+	sudo docker compose stop node3
 
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d consumidor1
-	sudo docker compose -f compose.localhost.yaml up --remove-orphans -d consumidor2
+run-producer:
+	sudo docker compose build productor1 productor2 productor3 productor4
+	sudo docker compose up --remove-orphans productor1 productor2 productor3 productor4
 
-	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d dynamodb2
-	sudo docker-compose -f compose.localhost.yaml logs -f consumidor1 consumidor2 dynamodb2
-
-localhost-VM4:
-	sudo docker-compose -f compose.localhost.yaml build banco dynamodb3
-	sudo docker-compose -f compose.localhost.yaml up --remove-orphans -d banco dynamodb3
-	sudo docker-compose -f compose.localhost.yaml logs -f banco dynamodb3
-
-
+stop-producer:
+	sudo docker compose stop productor1 productor2 productor3 productor4

@@ -4,7 +4,16 @@ option go_package = "./pbBancoUSM";
 package pbBancoUSM;
 
 service BancoUSM {
+    rpc CheckIsAlive(Empty) returns (IsAliveResponde);
     rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
+}
+
+message Empty {
+
+}
+
+message IsAliveResponde {
+    bool isAlive = 1;
 }
 
 message PaymentRequest {

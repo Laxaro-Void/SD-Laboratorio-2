@@ -3,14 +3,13 @@ syntax = "proto3";
 option go_package = "./pbDynamoDB";
 package pbDynamoDB;
 
-// Service for Register and Authentication of Consumers, Productors
 service DynamoDB {
     rpc CheckIsAlive(Empty) returns (IsAliveResponde);
     rpc CreateTable(CreateTableRequest) returns (CreateTableResponse);
     rpc PutItem(PutItemRequest) returns (PutItemResponse);
     rpc GetItem(GetItemRequest) returns (GetItemResponse);
 
-    rpc SyncNode(SyncNodeRequest) returns (SyncNodeResponse);
+    rpc SyncAllData(SyncAllDataRequest) returns (SyncAllDataResponse);
     rpc GetAllData(Empty) returns (GetAllDataResponse);
 }
 
@@ -47,23 +46,33 @@ message GetItemRequest {
     string key = 2;
 }
 
+message Item {
+    bytes value = 1;
+    bool exists = 2;
+}
+
 message GetItemResponse {
     bool success = 1;
-    bytes value = 2;
+    Item value = 2;
     string message = 3;
 }
 
-message SyncNodeRequest {
-    map<string, bytes> data = 1;
+message Table {
+    string name = 1;
+    map<string, bytes> data = 2;
 }
 
-message SyncNodeResponse {
+message SyncAllDataRequest {
+    repeated Table allData = 1;
+}
+
+message SyncAllDataResponse {
     bool success = 1;
     string message = 2;
 }
 
 message GetAllDataResponse {
     bool success = 1;
-    map<string, bytes> data = 2;
+    repeated Table allData = 2;
     string message = 3;
 }
