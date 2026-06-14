@@ -39,3 +39,6 @@ Maquina VM-28, IP:10.35.168.38
 
 Contiene el servicio de Banco USM + Nodo 1. Para ejecutar use:
 - `make docker-VM4`
+
+## Introduccion a Chaos Nodes
+Para simular la caida o lentitud de algunos de los particimantes del sistema. Se intro
