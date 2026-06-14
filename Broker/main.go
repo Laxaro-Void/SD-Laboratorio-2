@@ -36,9 +36,6 @@ type Broker struct {
 	D_TotalEnviados map[string]int
 	D_TotalAceptados int
 	D_TotalRechazados int
-
-	// BD
-	
 }
 
 
@@ -181,7 +178,7 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	Event.Stock 			= int32(req.Stock)
 	Event.SpendStock		= int32(0)
 	Event.FechaEvento 		= req.FechaEvento
-	Event.FechaPublicacion 	= time.Now().String()
+	Event.FechaPublicacion 	= time.Now().Format("2006-01-02T15:04:05")
 
 	// Validación
 	if Event.Precio <= 0 || Event.Stock <= 0 {
@@ -351,7 +348,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 	Purchase.TicketID = ticketId
 	Purchase.PaymentMethod = req.PaymentMethod
 	Purchase.FechaEvento = Event.FechaEvento
-	Purchase.FechaCompra = time.Now().String()
+	Purchase.FechaCompra = time.Now().Format("2006-01-02T15:04:05")
 
 	sendData, err := proto.Marshal(&Purchase)
 	if err != nil {

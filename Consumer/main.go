@@ -174,18 +174,18 @@ func (c *Consumer) GetEvents() {
 		Uuid: c.UUID,
 	})
 	if err != nil {
-		log.Printf("Error getting events: %v", err)
+		log.Printf("[CONS] Error getting events: %v", err)
 		return
 	}
 
 	if !response.Success {
-		log.Printf("Failed to get events: %s", response.Message)
+		log.Printf("[CONS] Failed to get events: %s", response.Message)
 		return
 	}
 
 	c.EventosDisponibles = make([]Event, 0)
 
-	log.Printf("Received %d events", len(response.Events))
+	log.Printf("[CONS] Received %d events", len(response.Events))
 	for _, event := range response.Events {
 		var newEvent Event
 		newEvent.EventID = event.EventID

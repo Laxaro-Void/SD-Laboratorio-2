@@ -1,13 +1,14 @@
 package main
 
 import (
-	"context"
-	"log"
-	"net"
 	"os"
+	"net"
+	"log"
+	"fmt"
 	"sort"
 	"sync"
 	"time"
+	"context"
 
 	"google.golang.org/grpc"
 
@@ -179,7 +180,15 @@ func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest
 
 	table.Data[req.Key] = req.Value
 	s.Node.Tables[req.TableName] = table
-	log.Printf("[NODE] Added item to table %s: key=%s, value=%v", req.TableName, req.Key, req.Value)
+	var preview string
+	if req.Value == nil {
+		preview = "nil"
+	} else if len(req.Value) > 3 {
+		preview = fmt.Sprintf("%v...", req.Value[:3])
+	} else {
+		preview = fmt.Sprintf("%v", req.Value)
+	}
+	log.Printf("[NODE] Added item to table %s: key=%s, value=%s", req.TableName, req.Key, preview)
 
 	return &pbDynamoDB.PutItemResponse{
 		Success: true,

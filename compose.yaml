@@ -171,3 +171,109 @@ services:
       default:
         aliases:
           - "node3"
+
+  chaos-node1:
+    image: docker:cli
+    container_name: chaos-node1
+    depends_on:
+      - node1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'Chaos: waiting before taking node1 down...';
+      sleep $((RANDOM % 50 + 20));
+      echo 'Chaos: stopping node1';
+      docker pause node-1;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting node1';
+      docker unpause node-1;
+      echo 'Chaos: done'
+      "
+  chaos-node2:
+    image: docker:cli
+    container_name: chaos-node2
+    depends_on:
+      - node2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'Chaos: waiting before taking node-2 down...';
+      sleep $((RANDOM % 50 + 60));
+      echo 'Chaos: pausing node-2';
+      docker pause node-2;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting node-2';
+      docker unpause node-2;
+      echo 'Chaos: done'
+      "
+
+  chaos-node3:
+    image: docker:cli
+    container_name: chaos-node3
+    depends_on:
+      - node3
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'Chaos: waiting before taking node-3 down...';
+      sleep $((RANDOM % 50 + 50));
+      echo 'Chaos: stopping node-3';
+      docker pause node-3;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting node1';
+      docker unpause node-3;
+      echo 'Chaos: done'
+      "
+  chaos-banco:
+    image: docker:cli
+    container_name: chaos-banco
+    depends_on:
+      - banco
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'Chaos: waiting before taking banco down...';
+      sleep $((RANDOM % 50 + 60));
+      echo 'Chaos: stopping banco';
+      docker pause banco;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting banco';
+      docker unpause banco;
+      echo 'Chaos: done'
+      "
+
+  chaos-consumer:
+    image: docker:cli
+    container_name: chaos-consumer
+    depends_on:
+      - consumer1
+      - consumer2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'Chaos: waiting before taking consumer-1 down...';
+      sleep $((RANDOM % 50 + 60));
+      echo 'Chaos: stopping consumer-1';
+      docker pause consumer-1;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting consumer-1';
+      docker unpause consumer-1;
+      echo 'Chaos: waiting before taking consumer-2 down...';
+      sleep $((RANDOM % 50 + 60));
+      echo 'Chaos: stopping consumer-2';
+      docker pause consumer-2;
+      sleep $((RANDOM % 15 + 5));
+      echo 'Chaos: restarting consumer-2';
+      docker unpause consumer-3;
+      echo 'Chaos: done'
+      "

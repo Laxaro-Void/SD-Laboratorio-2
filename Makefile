@@ -11,16 +11,16 @@ docker-VM1:
 	sudo docker-compose -f compose.yaml build broker
 	sudo docker-compose -f compose.yaml up broker
 docker-VM2:
-	sudo docker-compose -f compose.yaml build productor1 productor2 productor3 productor4 node3
-	sudo docker-compose -f compose.yaml up productor1 productor2 productor3 productor4 node3
+	sudo docker-compose -f compose.yaml build productor1 productor2 productor3 productor4 node3 chaos-node3
+	sudo docker-compose -f compose.yaml up productor1 productor2 productor3 productor4 node3 chaos-node3
 
 docker-VM3:
-	sudo docker-compose -f compose.yaml build consumer1 consumer1 node2
-	sudo docker-compose -f compose.yaml up consumer1 consumer1 node2
+	sudo docker-compose -f compose.yaml build consumer1 consumer1 node2 chaos-node2 chaos-consumer
+	sudo docker-compose -f compose.yaml up consumer1 consumer1 node2 chaos-node2 chaos-consumer
 
 docker-VM4:
-	sudo docker-compose -f compose.yaml build banco node1
-	sudo docker-compose -f compose.yaml up banco node1
+	sudo docker-compose -f compose.yaml build banco node1 chaos-node1 chaos-banco
+	sudo docker-compose -f compose.yaml up banco node1 chaos-node1 chaos-banco
 
 # LocalHost Only
 run-broker:
