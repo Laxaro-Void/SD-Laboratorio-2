@@ -183,10 +183,10 @@ services:
     command: >
       "
       echo 'Chaos: waiting before taking node1 down...';
-      sleep $((RANDOM % 50 + 20));
+      sleep $$((RANDOM % 50 + 20));
       echo 'Chaos: stopping node1';
       docker pause node-1;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting node1';
       docker unpause node-1;
       echo 'Chaos: done'
@@ -202,10 +202,10 @@ services:
     command: >
       "
       echo 'Chaos: waiting before taking node-2 down...';
-      sleep $((RANDOM % 50 + 60));
+      sleep $$((RANDOM % 50 + 60));
       echo 'Chaos: pausing node-2';
       docker pause node-2;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting node-2';
       docker unpause node-2;
       echo 'Chaos: done'
@@ -222,10 +222,10 @@ services:
     command: >
       "
       echo 'Chaos: waiting before taking node-3 down...';
-      sleep $((RANDOM % 50 + 50));
+      sleep $$((RANDOM % 50 + 50));
       echo 'Chaos: stopping node-3';
       docker pause node-3;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting node1';
       docker unpause node-3;
       echo 'Chaos: done'
@@ -241,10 +241,10 @@ services:
     command: >
       "
       echo 'Chaos: waiting before taking banco down...';
-      sleep $((RANDOM % 50 + 60));
+      sleep $$((RANDOM % 50 + 60));
       echo 'Chaos: stopping banco';
       docker pause banco;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting banco';
       docker unpause banco;
       echo 'Chaos: done'
@@ -262,17 +262,17 @@ services:
     command: >
       "
       echo 'Chaos: waiting before taking consumer-1 down...';
-      sleep $((RANDOM % 50 + 60));
+      sleep $$((RANDOM % 50 + 60));
       echo 'Chaos: stopping consumer-1';
       docker pause consumer-1;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting consumer-1';
       docker unpause consumer-1;
       echo 'Chaos: waiting before taking consumer-2 down...';
-      sleep $((RANDOM % 50 + 60));
+      sleep $$((RANDOM % 50 + 60));
       echo 'Chaos: stopping consumer-2';
       docker pause consumer-2;
-      sleep $((RANDOM % 15 + 5));
+      sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting consumer-2';
       docker unpause consumer-3;
       echo 'Chaos: done'
