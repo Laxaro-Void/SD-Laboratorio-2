@@ -20,7 +20,6 @@ Maquina VM-25, IP:10.35.168.35
 Contiene el servicio de Broker. Para ejecutar use:
 - `make docker-VM1`
 
-
 #### VM2
 Maquina VM-26, IP:10.35.168.36
 
