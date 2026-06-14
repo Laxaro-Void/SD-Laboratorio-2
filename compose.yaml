@@ -274,6 +274,6 @@ services:
       docker pause consumer-2;
       sleep $$((RANDOM % 15 + 5));
       echo 'Chaos: restarting consumer-2';
-      docker unpause consumer-3;
+      docker unpause consumer-2;
       echo 'Chaos: done'
       "

@@ -37,6 +37,7 @@ func (s *BancoServer) CheckIsAlive(ctx context.Context, req *pbBancoUSM.Empty) (
 	}, nil
 }
 
+// Procesamiento de pagos
 func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.PaymentRequest) (*pbBancoUSM.PaymentResponse, error) {
 	if req.Amount <= 0 {
 		return &pbBancoUSM.PaymentResponse{
@@ -45,6 +46,7 @@ func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.Paymen
 		}, nil
 	}
 
+	// Medio invalido
 	if req.PaymentMethod != "debito" && req.PaymentMethod != "credito" {
 		return &pbBancoUSM.PaymentResponse{
 			Success: false,
@@ -52,6 +54,7 @@ func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.Paymen
 		}, nil
 	}
 
+	// Probabilidas
 	var p float32;
 	if req.PaymentMethod == "credito" {
 		p = 0.9;
@@ -60,6 +63,7 @@ func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.Paymen
 		p = 0.8;
 	}
 
+	// Apuesta si se puede hacer el pago debido
 	if rand.Float32() > p {
 		log.Printf("ID: %s, Amount: %d, Method: %s, Result: Fail\n", req.Uuid, req.Amount, req.PaymentMethod)
 		return &pbBancoUSM.PaymentResponse{
@@ -75,6 +79,7 @@ func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.Paymen
 	}, nil
 }
 
+// Peticion de registro al broker
 func (s *Banco) Handshake() bool {
 	conn := NewGRPCClient(os.Getenv("BROKER_URL"))
 	s.Broker = pbBroker.NewBrokerClient(conn)
@@ -101,6 +106,7 @@ func (s *Banco) Handshake() bool {
 	return true
 }
 
+// Inicializa el servidor de banco
 func StartBancoServer(banco *Banco) {
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {

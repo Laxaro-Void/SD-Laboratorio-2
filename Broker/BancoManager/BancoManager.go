@@ -19,6 +19,7 @@ type BancoUSM struct {
 	mu sync.Mutex
 }
 
+// Crea un gestor de Banco
 func CreateBancoManager() *BancoUSM {
 	BANCO := &BancoUSM{
 		State: "NONE",
@@ -29,6 +30,7 @@ func CreateBancoManager() *BancoUSM {
 	return BANCO
 }
 
+// Verifica si la conexion al banco esta viva
 func (s *BancoUSM) CheckIsAliveProcedure() {
 	for {
 		time.Sleep(1 * time.Minute)
@@ -50,6 +52,7 @@ func (s *BancoUSM) CheckIsAliveProcedure() {
 	}
 }
 
+// Conecta un nodo tipo banco al gestor
 func (s *BancoUSM) Connect(IP string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -68,6 +71,7 @@ func (s *BancoUSM) Connect(IP string) bool {
 		return false
 	}
 
+	// Primer Nodo
 	if s.State == "NONE" {
 		s.Direction = IP
 		s.Client = newClient
@@ -77,17 +81,20 @@ func (s *BancoUSM) Connect(IP string) bool {
 		return true
 	}
 
+	// Rejecta otro Nodos
 	if s.Direction != IP {
 		conn.Close()
 		log.Printf("[Banco] Reject a unknown IP")
 		return false
 	}
 
+	// Restauracion
 	s.State = "Connected"
 	log.Printf("[Banco] Restored Conection to Banco at %s", IP)
 	return true
 }
 
+// Accede al servicio de Pagos del Banco
 func (s *BancoUSM) ProcessPayment(uuid string, amount int32, paymentMethod string) (bool, string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

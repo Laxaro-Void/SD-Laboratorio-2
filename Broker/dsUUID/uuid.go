@@ -10,6 +10,7 @@ type UUID [16]byte
 
 var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
 
+// Genera llaves unicas de identificadores
 func NewUUID() UUID {
 	var uuid UUID
 

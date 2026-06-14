@@ -33,6 +33,7 @@ type NodeServer struct {
 	pbDynamoDB.UnimplementedDynamoDBServer
 }
 
+// Incicializa el nodo de Dynamo
 func startServer(Node *Node) {
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
@@ -50,12 +51,14 @@ func startServer(Node *Node) {
 	}
 }
 
+// Fucnion para ver si nodo esta vivo
 func (s *NodeServer) CheckIsAlive(ctx context.Context, req *pbDynamoDB.Empty) (*pbDynamoDB.IsAliveResponde, error) {
 	return &pbDynamoDB.IsAliveResponde{
 		IsAlive: true,
 	}, nil
 }
 
+// Funcion para realizar el registro inicial
 func (s *Node) Handshake() bool {
 	conn := NewGRPCClient(os.Getenv("BROKER_URL"))
 	s.Broker = pbBroker.NewBrokerClient(conn)
@@ -82,6 +85,7 @@ func (s *Node) Handshake() bool {
 	return true
 }
 
+// Peticion para recivir toda la data para syncronizar con el resto de los nodos
 func (s *NodeServer) SyncAllData(ctx context.Context, req *pbDynamoDB.SyncAllDataRequest) (*pbDynamoDB.SyncAllDataResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()
@@ -111,6 +115,7 @@ func (s *NodeServer) SyncAllData(ctx context.Context, req *pbDynamoDB.SyncAllDat
 	}, nil
 }
 
+// Envia toda la data en ram para synconizar otros nodos
 func (s *NodeServer) GetAllData(ctx context.Context, req *pbDynamoDB.Empty) (*pbDynamoDB.GetAllDataResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()
@@ -142,6 +147,7 @@ func (s *NodeServer) GetAllData(ctx context.Context, req *pbDynamoDB.Empty) (*pb
 	return res, nil
 }
 
+// Crea una nueva tabla en ram
 func (s *NodeServer) CreateTable(ctx context.Context, req *pbDynamoDB.CreateTableRequest) (*pbDynamoDB.CreateTableResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()
@@ -166,6 +172,7 @@ func (s *NodeServer) CreateTable(ctx context.Context, req *pbDynamoDB.CreateTabl
 	}, nil
 }
 
+// Coloca un item en una tabla existene.
 func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest) (*pbDynamoDB.PutItemResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()
@@ -196,6 +203,7 @@ func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest
 	}, nil
 }
 
+// Obtiene toda la data
 func (s *NodeServer) GetTable(ctx context.Context, req *pbDynamoDB.GetTableRequest) (*pbDynamoDB.GetTableResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()
@@ -216,6 +224,7 @@ func (s *NodeServer) GetTable(ctx context.Context, req *pbDynamoDB.GetTableReque
 		keys = append(keys, key)
 	}
 
+	// Debe estar ordenado para facilitar comparacion por byte
 	sort.Strings(keys)
 	
 	for _, k := range keys {
@@ -234,6 +243,7 @@ func (s *NodeServer) GetTable(ctx context.Context, req *pbDynamoDB.GetTableReque
 	}, nil
 }
 
+// Obtiene un objeto de una tabla con una llave
 func (s *NodeServer) GetItem(ctx context.Context, req *pbDynamoDB.GetItemRequest) (*pbDynamoDB.GetItemResponse, error) {
 	s.Node.mu.Lock()
 	defer s.Node.mu.Unlock()

@@ -36,9 +36,10 @@ type DBManager struct {
 	// Stats
 	W_Exitosas int
 	W_Fallidas int
-	
+
 }
 
+// Crea un Gestor de BD
 func CreateDBManager(N int, W int, R int) *DBManager {
 	if 2*W <= N || 2*R <= N {
 		log.Fatalf("[DB] Invalid Configuration")
@@ -60,6 +61,7 @@ func CreateDBManager(N int, W int, R int) *DBManager {
 	return DB
 }
 
+// Verifica si los nodos existentes estan vivos
 func (s *DBManager) ChekIsAliveProcedure() {
 	for {
 		time.Sleep(1 * time.Minute)
@@ -82,6 +84,7 @@ func (s *DBManager) ChekIsAliveProcedure() {
 	}
 }
 
+// Agrega un nuevo nodo entrante
 func (s *DBManager) AddConection(IP string) bool {
 	conn := NewGRPCClient(IP)
 	newNode := &Node{
@@ -103,6 +106,7 @@ func (s *DBManager) AddConection(IP string) bool {
 	newNode.State = "Connected"
 	idx, exists := s.NodesMap[IP]
 
+	// Restauracion de conexion
 	if (exists) {
 		s.Nodes[idx].IsSync = false
 		s.Nodes[idx].State = "Connected"
@@ -112,6 +116,7 @@ func (s *DBManager) AddConection(IP string) bool {
 		return true
 	}
 
+	// Acepta el nodo si hay menos de N
 	if len(s.Nodes) < s.N {
 		if !s.FirstWrite {
 			newNode.IsSync = true
@@ -124,11 +129,13 @@ func (s *DBManager) AddConection(IP string) bool {
 		return true
 	}
 
+	// Rechaza nuevos entrantes al superar N
 	conn.Close()
 	log.Printf("[DB] Limited to %d Nodes, Rejecting %s", s.N, IP)
 	return false
 }
 
+// Sinconiza los nodos que necesitan
 func (s *DBManager) SyncNodes() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -145,6 +152,7 @@ func (s *DBManager) SyncNodes() {
 		return
 	}
 
+	// Encuentra el primer nodo que esta sync
 	var sourceIndex = -1
 	for idx, node := range s.Nodes {
 		if node.IsSync && node.State == "Connected" {
@@ -158,6 +166,7 @@ func (s *DBManager) SyncNodes() {
 		return
 	}
 
+	// Obiene toda la data de la conexion
 	sourceNode := s.Nodes[sourceIndex]
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -167,6 +176,7 @@ func (s *DBManager) SyncNodes() {
 		return
 	}
 
+	// Recorre los ndos conocidos en busca de sincronizacion
 	for idx, node := range s.Nodes {
 		if idx == sourceIndex || node.IsSync || node.State != "Connected" {
 			continue
@@ -193,6 +203,7 @@ func (s *DBManager) SyncNodes() {
 	}
 }
 
+// Se solicita a los nodos crear una tabla
 func (s *DBManager) CreateTable(tableName string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -205,6 +216,7 @@ func (s *DBManager) CreateTable(tableName string) bool {
 	var successNodes []int
 	var failedNodes []int
 
+	// Recorre los nodos existentes
 	for idx, node := range s.Nodes {
 		if node.State == "Connected" {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -229,6 +241,7 @@ func (s *DBManager) CreateTable(tableName string) bool {
 		}
 	}
 
+	// Requerimiento de escritura
 	if len(successNodes) < s.W {
 		for _, idx := range successNodes {
 			s.Nodes[idx].IsSync = false
@@ -243,12 +256,15 @@ func (s *DBManager) CreateTable(tableName string) bool {
 		s.Nodes[idx].IsSync = false
 	}
 
+	// Solicita Sync Asincrono
 	go s.SyncNodes()
 
 	if !s.FirstWrite { s.FirstWrite = true }
 	return true
 }
 
+// Se gestiona poner un item
+// Notar que se generaliza el valor como una cadena de Bytes.
 func (s *DBManager) PutItem(tableName string, key string, value []byte) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -261,6 +277,7 @@ func (s *DBManager) PutItem(tableName string, key string, value []byte) bool {
 	var successNodes []int
 	var failedNodes []int
 
+	// Mismo Patron de diseno de escritura
 	for idx, node := range s.Nodes {
 		if node.State == "Connected" {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -301,12 +318,14 @@ func (s *DBManager) PutItem(tableName string, key string, value []byte) bool {
 		s.Nodes[idx].IsSync = false
 	}
 
+	//Peticion de sync eventual
 	go s.SyncNodes()
 
 	if !s.FirstWrite { s.FirstWrite = true }
 	return true
 }
 
+// Peticion de obtener toda la tabla
 func (s *DBManager) GetTable(tableName string) (*pbDynamoDB.Table, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -324,6 +343,7 @@ func (s *DBManager) GetTable(tableName string) (*pbDynamoDB.Table, bool) {
 	var successResults [][]byte
 	var failedNodes []int
 
+	// Se obtienen los resultados de los nodos positivos
 	for idx, node := range s.Nodes {
 		if node.State == "Connected" {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -379,6 +399,7 @@ func (s *DBManager) GetTable(tableName string) (*pbDynamoDB.Table, bool) {
 		}
 	}
 
+	// Cual es el valor que mas se repite es el valor real.
 	if mostCount < s.R {
 		log.Printf("[DB] The Table %s is not repeated", tableName)
 		go s.SyncNodes()
@@ -405,6 +426,7 @@ func (s *DBManager) GetTable(tableName string) (*pbDynamoDB.Table, bool) {
 	return res, true
 }
 
+// Se obtiene un item a partir de una llave y tabla
 func (s *DBManager) GetItem(tableName string, key string) (*pbDynamoDB.Item, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -421,6 +443,7 @@ func (s *DBManager) GetItem(tableName string, key string) (*pbDynamoDB.Item, boo
 	var successResults [][]byte
 	var failedNodes []int
 
+	// Mismo patron de lectura
 	for idx, node := range s.Nodes {
 		if node.State == "Connected" {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

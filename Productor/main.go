@@ -30,6 +30,7 @@ type Producer struct {
 	UUID string
 }
 
+// Guarda la llave en disco
 func (c *Producer) SaveUUID(uuid string) {
 	file, err := os.Create(c.KeyPath)
 	if err != nil {
@@ -41,6 +42,7 @@ func (c *Producer) SaveUUID(uuid string) {
 	log.Println("Key Saved, Now you can safely close your sesion")
 }
 
+// Lee la llave en disco
 func (c *Producer) ReadUUID() (string, bool) {
 	_, err := os.Stat(c.KeyPath)
 	if os.IsNotExist(err) {
@@ -75,6 +77,7 @@ type Event struct {
 	Fecha_publicacion string
 }
 
+// Realiza la lectura de archivo de entrada condifurable en las ENV de docker compose
 func (c *Producer) ReadInput() {
 	file, err := os.Open(c.InputPath)
 	if err != nil {
@@ -110,6 +113,7 @@ func (c *Producer) ReadInput() {
 	}
 }
 
+// Publica un evento al broker
 func (c *Producer) PublishEvent(eventId string) bool {
 	event, exists := c.EventosProgramados[eventId]
 	if !exists {
@@ -139,6 +143,7 @@ func (c *Producer) PublishEvent(eventId string) bool {
 		return false
 	}
 
+	// Elimina evento de la lista.
 	c.EventosPublicados[eventId] = event
 	delete(c.EventosProgramados, eventId)
 
@@ -146,6 +151,7 @@ func (c *Producer) PublishEvent(eventId string) bool {
 	return true
 }
 
+// Funcion simula la publicacion eventaul de todos los eventos disponibles.
 func (c *Producer) PublishAllEvents() {
 	for {
 		for key := range c.EventosProgramados {
@@ -161,6 +167,7 @@ func (c *Producer) PublishAllEvents() {
 	}
 }
 
+// Funcion para registro al broker, responde con una nueva llave en caso de primera vez.
 func (c *Producer) Handshake() bool {
 	conn := NewGRPCClient(os.Getenv("BROKER_URL"))
 	c.Broker = pbBroker.NewBrokerClient(conn)

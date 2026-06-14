@@ -28,6 +28,7 @@ type Consumer struct {
 	UUID string
 }
 
+// Guarda llave en disco
 func (c *Consumer) SaveUUID(uuid string) {
 	file, err := os.Create(c.KeyPath)
 	if err != nil {
@@ -39,6 +40,7 @@ func (c *Consumer) SaveUUID(uuid string) {
 	log.Println("Key Saved, Now you can safely close your sesion")
 }
 
+// lee llave en disco
 func (c *Consumer) ReadUUID() (string, bool) {
 	_, err := os.Stat(c.KeyPath)
 	if os.IsNotExist(err) {
@@ -59,6 +61,7 @@ func (c *Consumer) ReadUUID() (string, bool) {
 	return uuid, true
 }
 
+// Peticion de registro al broker
 func (c *Consumer) Handshake() bool {
 	conn := NewGRPCClient(os.Getenv("BROKER_URL"))
 	c.Broker = pbBroker.NewBrokerClient(conn)
@@ -72,6 +75,7 @@ func (c *Consumer) Handshake() bool {
 		WhatIAm: "CONSUMIDOR",
 	}
 
+	// Si tengo una llave en mi poder, intenta usar esa
 	key, success := c.ReadUUID()
 	if success {
 		req.Uuid = &key
@@ -83,6 +87,7 @@ func (c *Consumer) Handshake() bool {
 		return false
 	}
 
+	// Si no es exitoso, necesito crear nuevo registro
 	if !res.Success {
 		req.Uuid = nil
 		
@@ -100,6 +105,7 @@ func (c *Consumer) Handshake() bool {
 		return false
 	}
 
+	// Guarda o reguarda la llave dependiendo de si el registro es exitoso
 	c.UUID = *res.UUID
 	c.SaveUUID(*res.UUID)
 
@@ -112,6 +118,7 @@ func (c *Consumer) Handshake() bool {
 	return true
 }
 
+// Crea el CSV
 func (c *Consumer) CreateCSV() {
 	file, err := os.Create(c.OutputPath)
 	if err != nil {
@@ -137,6 +144,7 @@ func (c *Consumer) CreateCSV() {
 	}
 }
 
+// Escribe el resultado de una compra
 func (c *Consumer) WriteOutTicket(recipe *pbConsumer.PurchaseEntry) {
 	file, err := os.OpenFile(
 		c.OutputPath,
@@ -169,6 +177,7 @@ type Event struct {
 	FechaPublicacion string
 }
 
+// Obtiene todos los eventos y los guarda en memoria
 func (c *Consumer) GetEvents() {
 	response, err := c.ConsumerClient.GetEvents(context.Background(), &pbConsumer.GetEventsRequest{
 		Uuid: c.UUID,
@@ -202,6 +211,7 @@ func (c *Consumer) GetEvents() {
 	}
 }
 
+// Realiza la compra de un evento
 func (c *Consumer) BuyEvent(idx int) {
 	var payMethod string
 	if rand.Float32() <= 0.5 {
@@ -231,6 +241,7 @@ func (c *Consumer) BuyEvent(idx int) {
 	c.WriteOutTicket(res.PurchaseResult)
 }	
 
+// Simulacion de Compras
 func (c *Consumer) Simulation() {
 	c.CreateCSV()
 

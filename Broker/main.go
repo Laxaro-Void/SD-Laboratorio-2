@@ -54,6 +54,7 @@ type ConsumerServer struct {
 	Broker *Broker
 }
 
+// Inicializar los Servidores del Broker
 func startServer(broker *Broker) {
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	if err != nil {
@@ -77,12 +78,14 @@ func startServer(broker *Broker) {
 	}
 }
 
+// Funcion para Ve si esta vivo el broker
 func (s *BrokerServer) CheckIsAlive(ctx context.Context, req *pbBroker.Empty) (*pbBroker.IsAliveResponde, error) {
 	return &pbBroker.IsAliveResponde{
 		IsAlive: true,
 	}, nil
 }
 
+// Agrega un Publisher/Discoteca
 func (s *Broker) AddPublisher(IP string, UUID *string) (bool, *string) {
 	if UUID != nil {
 		if !s.TruestedProducers.Exists(*UUID) {
@@ -102,6 +105,7 @@ func (s *Broker) AddPublisher(IP string, UUID *string) (bool, *string) {
 	return true, &newUUID
 }
 
+// Agrega un Consumer/Usuario
 func (s *Broker) AddConsumer(IP string, UUID *string) (bool, *string) {
 	if UUID != nil {
 		if !s.TrustedConsumer.Exists(*UUID) {
@@ -121,6 +125,7 @@ func (s *Broker) AddConsumer(IP string, UUID *string) (bool, *string) {
 	return true, &newUUID
 }
 
+// Funcion que permite el registro de los nodos. Sin realizar esto, los mensajes entrantes son rechazados
 func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeRequest) (*pbBroker.HandshakeResponse, error) {
 	s.Broker.mu.Lock()
 	defer s.Broker.mu.Unlock()
@@ -156,6 +161,7 @@ func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeReq
 	}, nil
 }
 
+// ProducerServer - Publica un evento a la BD
 func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.PublishEventRequest) (*pbProducer.PublishEventResponse, error) {
 	s.Broker.mu.Lock()
 	defer s.Broker.mu.Unlock()
@@ -231,6 +237,7 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	}, nil
 }
 
+// ConsumerServer - Obtiene Eventos para el Consumidor
 func (s *ConsumerServer) GetEvents(ctx context.Context, req *pbConsumer.GetEventsRequest) (*pbConsumer.GetEventsResponse, error) {
 	s.Broker.mu.Lock()
 	defer s.Broker.mu.Unlock()
@@ -284,6 +291,7 @@ func (s *ConsumerServer) GetEvents(ctx context.Context, req *pbConsumer.GetEvent
 	}, nil
 }
 
+// ConsumerServer - Servicio de Compra de Eventos Se comunica con la BD y el Banco
 func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.PurchaseEventRequest) (*pbConsumer.PurchaseEventResponse, error) {
 	s.Broker.mu.Lock()
 	defer s.Broker.mu.Unlock()
@@ -296,6 +304,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, nil
 	}
 
+	// Obtiene El evento
 	item, success := s.Broker.DB.GetItem("Eventos", req.EventID)
 	if success == false {
 		log.Printf("[BROKER-CONS] Could not verify if exists: %s", req.EventID)
@@ -305,6 +314,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, nil
 	}
 
+	// Existencia
 	if !item.Exists {
 		log.Printf("[BROKER-CONS] Event Do Not Exists: %s", req.EventID)
 		return &pbConsumer.PurchaseEventResponse{
@@ -323,6 +333,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, err
 	}
 
+	// Valida si hay stock
 	if Event.SpendStock >= Event.Stock {
 		log.Printf("[BROKER-CONS] Event %s is sold out", req.EventID)
 		return &pbConsumer.PurchaseEventResponse{
@@ -331,6 +342,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, nil
 	}
 
+	// Servicio de Banco
 	success, message := s.Broker.BANCO.ProcessPayment(req.Uuid, Event.Precio, req.PaymentMethod)
 	if !success {
 		log.Printf("[BROKER-CONS] %s", message)
@@ -340,8 +352,10 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, nil
 	}
 
+	// Siempre unico
 	ticketId := req.EventID + "-T" + strconv.FormatInt(int64(Event.SpendStock), 10)
 
+	// Prepara para subir la compra a la BD
 	var Purchase pbConsumer.PurchaseEntry
 	Purchase.UUID = req.Uuid
 	Purchase.EventID = req.EventID
@@ -359,12 +373,13 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 		}, err
 	}
 	
+	// Fuerza que la publicacion ocurra
 	for !s.Broker.DB.PutItem("Tickets", Purchase.TicketID, sendData) {
 		log.Printf("[BROKER-CONS] Retry push Purchase")
 		time.Sleep(5 * time.Second)
 	}
 
-	// Update Event
+	// Actualiza el evento en la BD
 	Event.SpendStock = Event.SpendStock + 1
 	sendData, err = proto.Marshal(&Event)
 
@@ -380,6 +395,7 @@ func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.Purc
 	}, nil
 }
 
+// Inicializa las tablas en la BD
 func (s *Broker) InitTables() {
 	for !s.DB.CreateTable("Eventos") {
 		log.Println("Failed to create table, retrying in 5 seconds...")
@@ -394,11 +410,11 @@ func (s *Broker) InitTables() {
 
 func serverBackground() {
 	broker := &Broker{
-		DB:    DBManager.CreateDBManager(3, 2, 2),
-		BANCO: BancoManager.CreateBancoManager(),
+		DB:    DBManager.CreateDBManager(3, 2, 2), // Gestor de la BD
+		BANCO: BancoManager.CreateBancoManager(),  // Gesto del Banco
 
-		TruestedProducers: dsRegisterMap.NewRegisterMap(),
-		TrustedConsumer:   dsRegisterMap.NewRegisterMap(),
+		TruestedProducers: dsRegisterMap.NewRegisterMap(), // Registro de Conexiones
+		TrustedConsumer:   dsRegisterMap.NewRegisterMap(), // Registro de Conexiones
 	}
 
 	go startServer(broker)
