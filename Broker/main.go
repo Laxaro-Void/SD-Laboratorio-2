@@ -6,8 +6,8 @@ import (
 	"time"
 	"log"
 	"net"
-	"fmt"
 	"os"
+	"strconv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -19,7 +19,6 @@ import (
 	dsRegisterMap "Broker/dsRegisterMap"
 
 	pbBroker "Broker/proto/pbBroker"
-	pbDynamoDB "Broker/proto/pbDynamoDB"
 	pbProducer "Broker/proto/pbProducer"
 	pbConsumer "Broker/proto/pbConsumer"
 )
@@ -30,7 +29,18 @@ type Broker struct {
 	BANCO *BancoManager.BancoUSM
 
 	TruestedProducers *dsRegisterMap.RegisterMap
+	TrustedConsumer   *dsRegisterMap.RegisterMap
+
+	// Reporte
+	// Discotecas
+	D_TotalEnviados map[string]int
+	D_TotalAceptados int
+	D_TotalRechazados int
+
+	// BD
+	
 }
+
 
 type BrokerServer struct {
 	Broker *Broker
@@ -82,7 +92,7 @@ func (s *Broker) AddPublisher(IP string, UUID *string) (bool, *string) {
 			log.Printf("[BROKER] Recive a untrusted Producer (%s)", IP)
 			return false, nil
 		} else {
-			log.Panicf("[BROKER] Got a Producer Back (%s)", IP)
+			log.Printf("[BROKER] Got a Producer Back (%s)", IP)
 			return true, UUID
 		}
 	}
@@ -95,12 +105,31 @@ func (s *Broker) AddPublisher(IP string, UUID *string) (bool, *string) {
 	return true, &newUUID
 }
 
+func (s *Broker) AddConsumer(IP string, UUID *string) (bool, *string) {
+	if UUID != nil {
+		if !s.TrustedConsumer.Exists(*UUID) {
+			log.Printf("[BROKER] Recive a untrusted Consumer (%s)", IP)
+			return false, nil
+		} else {
+			log.Printf("[BROKER] Got a Consumer Back (%s)", IP)
+			return true, UUID
+		}
+	}
+
+	var newUUID = dsUUID.NewUUID().String()
+	s.TrustedConsumer.Add(newUUID, IP)
+
+	log.Printf("[BROKER] Added a new Consumer (%s)", IP)
+
+	return true, &newUUID
+}
+
 func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeRequest) (*pbBroker.HandshakeResponse, error) {
 	s.Broker.mu.Lock()
 	defer s.Broker.mu.Unlock()
 
 	IP := req.Direction
-	log.Printf("Got Handshake Request from: %s", IP)
+	log.Printf("[BROKER] Got Handshake Request from: %s", IP)
 
 	var success = false
 	var key *string
@@ -112,18 +141,18 @@ func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeReq
 	case "PRODUCTOR":
 		success, key = s.Broker.AddPublisher(IP, req.Uuid)
 	case "CONSUMIDOR":
-	
+		success, key = s.Broker.AddConsumer(IP, req.Uuid)
 	}
 
 	if !success {
-		log.Printf("Handshake rejected or fail: %s", req.WhatIAm)
+		log.Printf("[BROKER] Handshake rejected or fail: %s", req.WhatIAm)
 		return &pbBroker.HandshakeResponse{
 			Success: false,
 			UUID: key,
 		}, nil
 	}
 
-	log.Printf("Success Conecting to Node at: %s", IP)
+	log.Printf("[BROKER] Success Conecting to Node at: %s", IP)
 	return &pbBroker.HandshakeResponse{
 		Success: true,
 		UUID: key,
@@ -131,6 +160,9 @@ func (s *BrokerServer) Handshake(ctx context.Context, req *pbBroker.HandshakeReq
 }
 
 func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.PublishEventRequest) (*pbProducer.PublishEventResponse, error) {
+	s.Broker.mu.Lock()
+	defer s.Broker.mu.Unlock()
+
 	if !s.Broker.TruestedProducers.Exists(req.Uuid) {
 		log.Println("[BROKER-PROD] Recive a Untrusted Node Request")
 		return &pbProducer.PublishEventResponse{
@@ -149,7 +181,7 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	Event.Stock 			= int32(req.Stock)
 	Event.SpendStock		= int32(0)
 	Event.FechaEvento 		= req.FechaEvento
-	Event.FechaPublicacion 	= time.Now().Format(time.RFC3339)
+	Event.FechaPublicacion 	= time.Now().String()
 
 	// Validación
 	if Event.Precio <= 0 || Event.Stock <= 0 {
@@ -202,6 +234,155 @@ func (s *ProducerServer) PublishEvent(ctx context.Context, req *pbProducer.Publi
 	}, nil
 }
 
+func (s *ConsumerServer) GetEvents(ctx context.Context, req *pbConsumer.GetEventsRequest) (*pbConsumer.GetEventsResponse, error) {
+	s.Broker.mu.Lock()
+	defer s.Broker.mu.Unlock()
+
+	if !s.Broker.TrustedConsumer.Exists(req.Uuid) {
+		log.Println("[BROKER-CONS] Recive a Untrusted Node Request")
+		return &pbConsumer.GetEventsResponse{
+			Success: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	table, success := s.Broker.DB.GetTable("Eventos")
+	if !success {
+		log.Printf("[BROKER-CONS] Fail to get Table %s", "Eventos")
+		return &pbConsumer.GetEventsResponse{
+			Success: false,
+			Message: "Fail to get Table Eventos",
+			Events: nil,
+		}, nil
+	}
+
+	log.Printf("[BROKER-CONS] Got Table %s", "Eventos")
+	var Eventos []*pbConsumer.Event
+	for _, dataByte := range table.Value {
+		var eventoBroker pbBroker.Event
+		var eventoConsumer pbConsumer.Event
+		err := proto.Unmarshal(dataByte, &eventoBroker)
+		if err != nil {
+			log.Panic("[BROKER-CONS] Faild to Interpret Byte to Event")
+		}
+
+		eventoConsumer.EventID = eventoBroker.EventID
+		eventoConsumer.Discoteca = eventoBroker.Discoteca
+		eventoConsumer.NombreEvento = eventoBroker.NombreEvento
+		eventoConsumer.Categoria = eventoBroker.Categoria
+		eventoConsumer.Comuna = eventoBroker.Comuna
+		eventoConsumer.Precio = eventoBroker.Precio
+		eventoConsumer.Stock = eventoBroker.Stock
+		eventoConsumer.SpendStock = eventoBroker.SpendStock
+		eventoConsumer.FechaEvento = eventoBroker.FechaEvento
+		eventoConsumer.FechaPublicacion = eventoBroker.FechaPublicacion
+		
+		Eventos = append(Eventos, &eventoConsumer)
+	}
+
+	return &pbConsumer.GetEventsResponse{
+		Success: true,
+		Message: "Got Table Eventos",
+		Events: Eventos,
+	}, nil
+}
+
+func (s *ConsumerServer) PurchaseEvent(ctx context.Context, req *pbConsumer.PurchaseEventRequest) (*pbConsumer.PurchaseEventResponse, error) {
+	s.Broker.mu.Lock()
+	defer s.Broker.mu.Unlock()
+
+	if !s.Broker.TrustedConsumer.Exists(req.Uuid) {
+		log.Println("[BROKER-CONS] Recive a Untrusted Node Request")
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: "403 forbidden",
+		}, nil
+	}
+
+	item, success := s.Broker.DB.GetItem("Eventos", req.EventID)
+	if success == false {
+		log.Printf("[BROKER-CONS] Could not verify if exists: %s", req.EventID)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: "Could not verify if exists",
+		}, nil
+	}
+
+	if !item.Exists {
+		log.Printf("[BROKER-CONS] Event Do Not Exists: %s", req.EventID)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: true,
+			Message: "Event Do Not Exists",
+		}, nil
+	}
+
+	var Event pbBroker.Event
+	err := proto.Unmarshal(item.Value, &Event)
+	if err != nil {
+		log.Printf("[BROKER-CONS] Unable to Marshal Event, err: %v", err)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: "Unable to Marshal Event",
+		}, err
+	}
+
+	if Event.SpendStock >= Event.Stock {
+		log.Printf("[BROKER-CONS] Event %s is sold out", req.EventID)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: "Sold out",
+		}, nil
+	}
+
+	success, message := s.Broker.BANCO.ProcessPayment(req.Uuid, Event.Precio, req.PaymentMethod)
+	if !success {
+		log.Printf("[BROKER-CONS] %s", message)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: message,
+		}, nil
+	}
+
+	ticketId := req.EventID + "-T" + strconv.FormatInt(int64(Event.SpendStock), 10)
+
+	var Purchase pbConsumer.PurchaseEntry
+	Purchase.UUID = req.Uuid
+	Purchase.EventID = req.EventID
+	Purchase.TicketID = ticketId
+	Purchase.PaymentMethod = req.PaymentMethod
+	Purchase.FechaEvento = Event.FechaEvento
+	Purchase.FechaCompra = time.Now().String()
+
+	sendData, err := proto.Marshal(&Purchase)
+	if err != nil {
+		log.Printf("[BROKER-CONS] Fail to Marshal Purchase: %v", err)
+		return &pbConsumer.PurchaseEventResponse{
+			Success: false,
+			Message: "Fail to Marshal Purchase",
+		}, err
+	}
+	
+	for !s.Broker.DB.PutItem("Tickets", Purchase.TicketID, sendData) {
+		log.Printf("[BROKER-CONS] Retry push Purchase")
+		time.Sleep(5 * time.Second)
+	}
+
+	// Update Event
+	Event.SpendStock = Event.SpendStock + 1
+	sendData, err = proto.Marshal(&Event)
+
+	for !s.Broker.DB.PutItem("Eventos", Event.EventID, sendData) {
+		log.Printf("[BROKER-CONS] Retry push Event Update")
+		time.Sleep(5 * time.Second)
+	}
+
+	return &pbConsumer.PurchaseEventResponse{
+		Success: true,
+		Message: "Purchase Success",
+		PurchaseResult: &Purchase,
+	}, nil
+}
+
 func (s *Broker) InitTables() {
 	for !s.DB.CreateTable("Eventos") {
 		log.Println("Failed to create table, retrying in 5 seconds...")
@@ -214,49 +395,13 @@ func (s *Broker) InitTables() {
 	}
 }
 
-func (s *Broker) TestDB() {
-	for i := 0; i < 10; i++ {
-		data := pbBroker.Data{
-			Data: int32(i),
-		}
-
-		item, err := proto.Marshal(&data)
-		if err != nil {
-			log.Panicln("What")
-		}
-
-		for !s.DB.PutItem("Eventos", fmt.Sprintf("Key-%d", i), item) {
-			log.Println("Failed to put item, retrying in 5 seconds...")
-			time.Sleep(5 * time.Second)
-		}
-	}
-
-	for i := 0; i < 10; i++ {
-		var item *pbDynamoDB.Item
-		success := false
-		for !success {
-			item, success = s.DB.GetItem("Eventos", fmt.Sprintf("Key-%d", i))
-			time.Sleep(5 * time.Second)
-		}
-
-		var value pbBroker.Data
-		proto.Unmarshal(item.Value, &value)
-
-		if int(value.Data) != i {
-			log.Println("Is not the same")
-			i--
-			continue
-		}
-		time.Sleep(10 * time.Second)
-	}
-}
-
 func serverBackground() {
 	broker := &Broker{
-		DB: DBManager.CreateDBManager(3, 2, 2),
+		DB:    DBManager.CreateDBManager(3, 2, 2),
 		BANCO: BancoManager.CreateBancoManager(),
 
 		TruestedProducers: dsRegisterMap.NewRegisterMap(),
+		TrustedConsumer:   dsRegisterMap.NewRegisterMap(),
 	}
 
 	go startServer(broker)

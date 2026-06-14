@@ -21,50 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Data struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          int32                  `protobuf:"varint,1,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Data) Reset() {
-	*x = Data{}
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Data) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Data) ProtoMessage() {}
-
-func (x *Data) ProtoReflect() protoreflect.Message {
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Data.ProtoReflect.Descriptor instead.
-func (*Data) Descriptor() ([]byte, []int) {
-	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *Data) GetData() int32 {
-	if x != nil {
-		return x.Data
-	}
-	return 0
-}
-
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -73,7 +29,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[1]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -85,7 +41,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[1]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -98,7 +54,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{1}
+	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{0}
 }
 
 type IsAliveResponde struct {
@@ -110,7 +66,7 @@ type IsAliveResponde struct {
 
 func (x *IsAliveResponde) Reset() {
 	*x = IsAliveResponde{}
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[2]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -122,7 +78,7 @@ func (x *IsAliveResponde) String() string {
 func (*IsAliveResponde) ProtoMessage() {}
 
 func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[2]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -135,7 +91,7 @@ func (x *IsAliveResponde) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsAliveResponde.ProtoReflect.Descriptor instead.
 func (*IsAliveResponde) Descriptor() ([]byte, []int) {
-	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{2}
+	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *IsAliveResponde) GetIsAlive() bool {
@@ -155,7 +111,7 @@ type HandshakeRequest struct {
 
 func (x *HandshakeRequest) Reset() {
 	*x = HandshakeRequest{}
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[3]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -167,7 +123,7 @@ func (x *HandshakeRequest) String() string {
 func (*HandshakeRequest) ProtoMessage() {}
 
 func (x *HandshakeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[3]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -180,7 +136,7 @@ func (x *HandshakeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HandshakeRequest.ProtoReflect.Descriptor instead.
 func (*HandshakeRequest) Descriptor() ([]byte, []int) {
-	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{3}
+	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *HandshakeRequest) GetDirection() string {
@@ -206,7 +162,7 @@ type HandshakeResponse struct {
 
 func (x *HandshakeResponse) Reset() {
 	*x = HandshakeResponse{}
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[4]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -218,7 +174,7 @@ func (x *HandshakeResponse) String() string {
 func (*HandshakeResponse) ProtoMessage() {}
 
 func (x *HandshakeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Banco_proto_pbBroker_proto_msgTypes[4]
+	mi := &file_Banco_proto_pbBroker_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -231,7 +187,7 @@ func (x *HandshakeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HandshakeResponse.ProtoReflect.Descriptor instead.
 func (*HandshakeResponse) Descriptor() ([]byte, []int) {
-	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{4}
+	return file_Banco_proto_pbBroker_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *HandshakeResponse) GetSuccess() bool {
@@ -245,9 +201,7 @@ var File_Banco_proto_pbBroker_proto protoreflect.FileDescriptor
 
 const file_Banco_proto_pbBroker_proto_rawDesc = "" +
 	"\n" +
-	"\x1aBanco/proto/pbBroker.proto\x12\bpbBroker\"\x1a\n" +
-	"\x04Data\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\x05R\x04data\"\a\n" +
+	"\x1aBanco/proto/pbBroker.proto\x12\bpbBroker\"\a\n" +
 	"\x05Empty\"+\n" +
 	"\x0fIsAliveResponde\x12\x18\n" +
 	"\aisAlive\x18\x01 \x01(\bR\aisAlive\"J\n" +
@@ -273,19 +227,18 @@ func file_Banco_proto_pbBroker_proto_rawDescGZIP() []byte {
 	return file_Banco_proto_pbBroker_proto_rawDescData
 }
 
-var file_Banco_proto_pbBroker_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_Banco_proto_pbBroker_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_Banco_proto_pbBroker_proto_goTypes = []any{
-	(*Data)(nil),              // 0: pbBroker.Data
-	(*Empty)(nil),             // 1: pbBroker.Empty
-	(*IsAliveResponde)(nil),   // 2: pbBroker.IsAliveResponde
-	(*HandshakeRequest)(nil),  // 3: pbBroker.HandshakeRequest
-	(*HandshakeResponse)(nil), // 4: pbBroker.HandshakeResponse
+	(*Empty)(nil),             // 0: pbBroker.Empty
+	(*IsAliveResponde)(nil),   // 1: pbBroker.IsAliveResponde
+	(*HandshakeRequest)(nil),  // 2: pbBroker.HandshakeRequest
+	(*HandshakeResponse)(nil), // 3: pbBroker.HandshakeResponse
 }
 var file_Banco_proto_pbBroker_proto_depIdxs = []int32{
-	1, // 0: pbBroker.Broker.CheckIsAlive:input_type -> pbBroker.Empty
-	3, // 1: pbBroker.Broker.Handshake:input_type -> pbBroker.HandshakeRequest
-	2, // 2: pbBroker.Broker.CheckIsAlive:output_type -> pbBroker.IsAliveResponde
-	4, // 3: pbBroker.Broker.Handshake:output_type -> pbBroker.HandshakeResponse
+	0, // 0: pbBroker.Broker.CheckIsAlive:input_type -> pbBroker.Empty
+	2, // 1: pbBroker.Broker.Handshake:input_type -> pbBroker.HandshakeRequest
+	1, // 2: pbBroker.Broker.CheckIsAlive:output_type -> pbBroker.IsAliveResponde
+	3, // 3: pbBroker.Broker.Handshake:output_type -> pbBroker.HandshakeResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -304,7 +257,7 @@ func file_Banco_proto_pbBroker_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Banco_proto_pbBroker_proto_rawDesc), len(file_Banco_proto_pbBroker_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

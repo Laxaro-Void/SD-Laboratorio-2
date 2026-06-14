@@ -473,17 +473,122 @@ func (x *GetItemResponse) GetMessage() string {
 	return ""
 }
 
+type GetTableRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TableName     string                 `protobuf:"bytes,1,opt,name=table_name,json=tableName,proto3" json:"table_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTableRequest) Reset() {
+	*x = GetTableRequest{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTableRequest) ProtoMessage() {}
+
+func (x *GetTableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTableRequest.ProtoReflect.Descriptor instead.
+func (*GetTableRequest) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetTableRequest) GetTableName() string {
+	if x != nil {
+		return x.TableName
+	}
+	return ""
+}
+
+type GetTableResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Data          *Table                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTableResponse) Reset() {
+	*x = GetTableResponse{}
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTableResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTableResponse) ProtoMessage() {}
+
+func (x *GetTableResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTableResponse.ProtoReflect.Descriptor instead.
+func (*GetTableResponse) Descriptor() ([]byte, []int) {
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetTableResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *GetTableResponse) GetData() *Table {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *GetTableResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 type Table struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Data          map[string][]byte      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Keys          []string               `protobuf:"bytes,2,rep,name=keys,proto3" json:"keys,omitempty"`
+	Value         [][]byte               `protobuf:"bytes,3,rep,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Table) Reset() {
 	*x = Table{}
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[9]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -495,7 +600,7 @@ func (x *Table) String() string {
 func (*Table) ProtoMessage() {}
 
 func (x *Table) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[9]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -508,7 +613,7 @@ func (x *Table) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Table.ProtoReflect.Descriptor instead.
 func (*Table) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{9}
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Table) GetName() string {
@@ -518,9 +623,16 @@ func (x *Table) GetName() string {
 	return ""
 }
 
-func (x *Table) GetData() map[string][]byte {
+func (x *Table) GetKeys() []string {
 	if x != nil {
-		return x.Data
+		return x.Keys
+	}
+	return nil
+}
+
+func (x *Table) GetValue() [][]byte {
+	if x != nil {
+		return x.Value
 	}
 	return nil
 }
@@ -534,7 +646,7 @@ type SyncAllDataRequest struct {
 
 func (x *SyncAllDataRequest) Reset() {
 	*x = SyncAllDataRequest{}
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[10]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -546,7 +658,7 @@ func (x *SyncAllDataRequest) String() string {
 func (*SyncAllDataRequest) ProtoMessage() {}
 
 func (x *SyncAllDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[10]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -559,7 +671,7 @@ func (x *SyncAllDataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncAllDataRequest.ProtoReflect.Descriptor instead.
 func (*SyncAllDataRequest) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{10}
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SyncAllDataRequest) GetAllData() []*Table {
@@ -579,7 +691,7 @@ type SyncAllDataResponse struct {
 
 func (x *SyncAllDataResponse) Reset() {
 	*x = SyncAllDataResponse{}
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[11]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -591,7 +703,7 @@ func (x *SyncAllDataResponse) String() string {
 func (*SyncAllDataResponse) ProtoMessage() {}
 
 func (x *SyncAllDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[11]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -604,7 +716,7 @@ func (x *SyncAllDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncAllDataResponse.ProtoReflect.Descriptor instead.
 func (*SyncAllDataResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{11}
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SyncAllDataResponse) GetSuccess() bool {
@@ -632,7 +744,7 @@ type GetAllDataResponse struct {
 
 func (x *GetAllDataResponse) Reset() {
 	*x = GetAllDataResponse{}
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[12]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -644,7 +756,7 @@ func (x *GetAllDataResponse) String() string {
 func (*GetAllDataResponse) ProtoMessage() {}
 
 func (x *GetAllDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[12]
+	mi := &file_Broker_proto_pbDynamoDB_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -657,7 +769,7 @@ func (x *GetAllDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllDataResponse.ProtoReflect.Descriptor instead.
 func (*GetAllDataResponse) Descriptor() ([]byte, []int) {
-	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{12}
+	return file_Broker_proto_pbDynamoDB_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetAllDataResponse) GetSuccess() bool {
@@ -714,13 +826,18 @@ const file_Broker_proto_pbDynamoDB_proto_rawDesc = "" +
 	"\x0fGetItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12&\n" +
 	"\x05value\x18\x02 \x01(\v2\x10.pbDynamoDB.ItemR\x05value\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"\x85\x01\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"0\n" +
+	"\x0fGetTableRequest\x12\x1d\n" +
+	"\n" +
+	"table_name\x18\x01 \x01(\tR\ttableName\"m\n" +
+	"\x10GetTableResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12%\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.pbDynamoDB.TableR\x04data\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"E\n" +
 	"\x05Table\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12/\n" +
-	"\x04data\x18\x02 \x03(\v2\x1b.pbDynamoDB.Table.DataEntryR\x04data\x1a7\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value:\x028\x01\"A\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04keys\x18\x02 \x03(\tR\x04keys\x12\x14\n" +
+	"\x05value\x18\x03 \x03(\fR\x05value\"A\n" +
 	"\x12SyncAllDataRequest\x12+\n" +
 	"\aallData\x18\x01 \x03(\v2\x11.pbDynamoDB.TableR\aallData\"I\n" +
 	"\x13SyncAllDataResponse\x12\x18\n" +
@@ -729,12 +846,13 @@ const file_Broker_proto_pbDynamoDB_proto_rawDesc = "" +
 	"\x12GetAllDataResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12+\n" +
 	"\aallData\x18\x02 \x03(\v2\x11.pbDynamoDB.TableR\aallData\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage2\xb3\x03\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage2\xfa\x03\n" +
 	"\bDynamoDB\x12>\n" +
 	"\fCheckIsAlive\x12\x11.pbDynamoDB.Empty\x1a\x1b.pbDynamoDB.IsAliveResponde\x12N\n" +
 	"\vCreateTable\x12\x1e.pbDynamoDB.CreateTableRequest\x1a\x1f.pbDynamoDB.CreateTableResponse\x12B\n" +
 	"\aPutItem\x12\x1a.pbDynamoDB.PutItemRequest\x1a\x1b.pbDynamoDB.PutItemResponse\x12B\n" +
-	"\aGetItem\x12\x1a.pbDynamoDB.GetItemRequest\x1a\x1b.pbDynamoDB.GetItemResponse\x12N\n" +
+	"\aGetItem\x12\x1a.pbDynamoDB.GetItemRequest\x1a\x1b.pbDynamoDB.GetItemResponse\x12E\n" +
+	"\bGetTable\x12\x1b.pbDynamoDB.GetTableRequest\x1a\x1c.pbDynamoDB.GetTableResponse\x12N\n" +
 	"\vSyncAllData\x12\x1e.pbDynamoDB.SyncAllDataRequest\x1a\x1f.pbDynamoDB.SyncAllDataResponse\x12?\n" +
 	"\n" +
 	"GetAllData\x12\x11.pbDynamoDB.Empty\x1a\x1e.pbDynamoDB.GetAllDataResponseB\x0eZ\f./pbDynamoDBb\x06proto3"
@@ -751,7 +869,7 @@ func file_Broker_proto_pbDynamoDB_proto_rawDescGZIP() []byte {
 	return file_Broker_proto_pbDynamoDB_proto_rawDescData
 }
 
-var file_Broker_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_Broker_proto_pbDynamoDB_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_Broker_proto_pbDynamoDB_proto_goTypes = []any{
 	(*Empty)(nil),               // 0: pbDynamoDB.Empty
 	(*IsAliveResponde)(nil),     // 1: pbDynamoDB.IsAliveResponde
@@ -762,31 +880,34 @@ var file_Broker_proto_pbDynamoDB_proto_goTypes = []any{
 	(*GetItemRequest)(nil),      // 6: pbDynamoDB.GetItemRequest
 	(*Item)(nil),                // 7: pbDynamoDB.Item
 	(*GetItemResponse)(nil),     // 8: pbDynamoDB.GetItemResponse
-	(*Table)(nil),               // 9: pbDynamoDB.Table
-	(*SyncAllDataRequest)(nil),  // 10: pbDynamoDB.SyncAllDataRequest
-	(*SyncAllDataResponse)(nil), // 11: pbDynamoDB.SyncAllDataResponse
-	(*GetAllDataResponse)(nil),  // 12: pbDynamoDB.GetAllDataResponse
-	nil,                         // 13: pbDynamoDB.Table.DataEntry
+	(*GetTableRequest)(nil),     // 9: pbDynamoDB.GetTableRequest
+	(*GetTableResponse)(nil),    // 10: pbDynamoDB.GetTableResponse
+	(*Table)(nil),               // 11: pbDynamoDB.Table
+	(*SyncAllDataRequest)(nil),  // 12: pbDynamoDB.SyncAllDataRequest
+	(*SyncAllDataResponse)(nil), // 13: pbDynamoDB.SyncAllDataResponse
+	(*GetAllDataResponse)(nil),  // 14: pbDynamoDB.GetAllDataResponse
 }
 var file_Broker_proto_pbDynamoDB_proto_depIdxs = []int32{
 	7,  // 0: pbDynamoDB.GetItemResponse.value:type_name -> pbDynamoDB.Item
-	13, // 1: pbDynamoDB.Table.data:type_name -> pbDynamoDB.Table.DataEntry
-	9,  // 2: pbDynamoDB.SyncAllDataRequest.allData:type_name -> pbDynamoDB.Table
-	9,  // 3: pbDynamoDB.GetAllDataResponse.allData:type_name -> pbDynamoDB.Table
+	11, // 1: pbDynamoDB.GetTableResponse.data:type_name -> pbDynamoDB.Table
+	11, // 2: pbDynamoDB.SyncAllDataRequest.allData:type_name -> pbDynamoDB.Table
+	11, // 3: pbDynamoDB.GetAllDataResponse.allData:type_name -> pbDynamoDB.Table
 	0,  // 4: pbDynamoDB.DynamoDB.CheckIsAlive:input_type -> pbDynamoDB.Empty
 	2,  // 5: pbDynamoDB.DynamoDB.CreateTable:input_type -> pbDynamoDB.CreateTableRequest
 	4,  // 6: pbDynamoDB.DynamoDB.PutItem:input_type -> pbDynamoDB.PutItemRequest
 	6,  // 7: pbDynamoDB.DynamoDB.GetItem:input_type -> pbDynamoDB.GetItemRequest
-	10, // 8: pbDynamoDB.DynamoDB.SyncAllData:input_type -> pbDynamoDB.SyncAllDataRequest
-	0,  // 9: pbDynamoDB.DynamoDB.GetAllData:input_type -> pbDynamoDB.Empty
-	1,  // 10: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
-	3,  // 11: pbDynamoDB.DynamoDB.CreateTable:output_type -> pbDynamoDB.CreateTableResponse
-	5,  // 12: pbDynamoDB.DynamoDB.PutItem:output_type -> pbDynamoDB.PutItemResponse
-	8,  // 13: pbDynamoDB.DynamoDB.GetItem:output_type -> pbDynamoDB.GetItemResponse
-	11, // 14: pbDynamoDB.DynamoDB.SyncAllData:output_type -> pbDynamoDB.SyncAllDataResponse
-	12, // 15: pbDynamoDB.DynamoDB.GetAllData:output_type -> pbDynamoDB.GetAllDataResponse
-	10, // [10:16] is the sub-list for method output_type
-	4,  // [4:10] is the sub-list for method input_type
+	9,  // 8: pbDynamoDB.DynamoDB.GetTable:input_type -> pbDynamoDB.GetTableRequest
+	12, // 9: pbDynamoDB.DynamoDB.SyncAllData:input_type -> pbDynamoDB.SyncAllDataRequest
+	0,  // 10: pbDynamoDB.DynamoDB.GetAllData:input_type -> pbDynamoDB.Empty
+	1,  // 11: pbDynamoDB.DynamoDB.CheckIsAlive:output_type -> pbDynamoDB.IsAliveResponde
+	3,  // 12: pbDynamoDB.DynamoDB.CreateTable:output_type -> pbDynamoDB.CreateTableResponse
+	5,  // 13: pbDynamoDB.DynamoDB.PutItem:output_type -> pbDynamoDB.PutItemResponse
+	8,  // 14: pbDynamoDB.DynamoDB.GetItem:output_type -> pbDynamoDB.GetItemResponse
+	10, // 15: pbDynamoDB.DynamoDB.GetTable:output_type -> pbDynamoDB.GetTableResponse
+	13, // 16: pbDynamoDB.DynamoDB.SyncAllData:output_type -> pbDynamoDB.SyncAllDataResponse
+	14, // 17: pbDynamoDB.DynamoDB.GetAllData:output_type -> pbDynamoDB.GetAllDataResponse
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -803,7 +924,7 @@ func file_Broker_proto_pbDynamoDB_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Broker_proto_pbDynamoDB_proto_rawDesc), len(file_Broker_proto_pbDynamoDB_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

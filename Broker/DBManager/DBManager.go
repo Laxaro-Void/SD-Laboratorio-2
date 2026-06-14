@@ -32,6 +32,11 @@ type DBManager struct {
 
 	Nodes []Node
 	NodesMap map[string]int
+
+	// Stats
+	W_Exitosas int
+	W_Fallidas int
+	
 }
 
 func CreateDBManager(N int, W int, R int) *DBManager {
@@ -302,6 +307,104 @@ func (s *DBManager) PutItem(tableName string, key string, value []byte) bool {
 	return true
 }
 
+func (s *DBManager) GetTable(tableName string) (*pbDynamoDB.Table, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if (len(s.Nodes) < s.R) {
+		log.Printf("[DB] Failed to get item from table %s: No nodes available", tableName)
+		return &pbDynamoDB.Table{
+			Name: "",
+			Keys: nil,
+			Value: nil,
+		}, false
+	}
+
+	var successNodes []int
+	var successResults [][]byte
+	var failedNodes []int
+
+	for idx, node := range s.Nodes {
+		if node.State == "Connected" {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel();
+			res, err := node.Client.GetTable(ctx, &pbDynamoDB.GetTableRequest{
+				TableName: tableName,
+			})
+			if err != nil {
+				failedNodes = append(failedNodes, idx)
+				log.Printf("[DB] Failed to get table %s on node %s: %v", tableName, node.Direction, err)
+
+			} else if !res.Success {
+				failedNodes = append(failedNodes, idx)
+				log.Printf("[DB] Failed to get table %s on node %s", tableName, node.Direction)
+
+			} else {
+				value, err := proto.Marshal(res.Data)
+				if err != nil {
+					log.Panicln("What")
+				}
+				successNodes = append(successNodes, idx)
+				successResults = append(successResults, value)
+			}
+		} else {
+			log.Printf("[DB] Failed to get table %s on node %s: Node is not connected", tableName, node.Direction)
+			failedNodes = append(failedNodes, idx)
+		}
+	}
+	if len(successResults) < s.W {
+		log.Printf("[DB] Failed to get item in table %s: Some nodes failed to get item", tableName)
+		return nil, false
+	}
+
+	counts := make(map[string]int)
+	values := make(map[string][]byte)
+
+	// Counts Times Same
+	for _, value := range successResults {
+		valueKey := string(value)
+		counts[valueKey]++
+		if _, ok := values[valueKey]; !ok {
+			values[valueKey] = value
+		}
+	}
+
+	// Get Most repeted
+	mostCount := 0
+	var mostValue []byte
+	for key, count := range counts {
+		if count > mostCount {
+			mostCount = count
+			mostValue = values[key]
+		}
+	}
+
+	if mostCount < s.R {
+		log.Printf("[DB] The Table %s is not repeated", tableName)
+		go s.SyncNodes()
+
+		return nil, false
+	}
+
+	log.Printf("[DB] Successfully got table %s on nodes: %v", tableName, successNodes)
+	for idx, value := range successResults {
+		valueKey := string(value)
+		if  c, _ := counts[valueKey]; c < mostCount {
+			s.Nodes[successNodes[idx]].IsSync = false
+		}
+	}
+
+	go s.SyncNodes()
+
+	res := &pbDynamoDB.Table{}
+	err := proto.Unmarshal(mostValue, res)
+	if err != nil {
+		log.Panicln("What")
+	}
+
+	return res, true
+}
+
 func (s *DBManager) GetItem(tableName string, key string) (*pbDynamoDB.Item, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -349,7 +452,6 @@ func (s *DBManager) GetItem(tableName string, key string) (*pbDynamoDB.Item, boo
 	}
 
 	if len(successResults) < s.W {
-
 		log.Printf("[DB] Failed to get item in table %s: Some nodes failed to get item", tableName)
 		return nil, false
 	}

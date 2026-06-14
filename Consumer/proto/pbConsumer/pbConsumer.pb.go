@@ -181,9 +181,93 @@ func (x *Event) GetFechaPublicacion() string {
 	return ""
 }
 
+type PurchaseEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UUID          string                 `protobuf:"bytes,1,opt,name=UUID,proto3" json:"UUID,omitempty"`
+	EventID       string                 `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"`
+	TicketID      string                 `protobuf:"bytes,3,opt,name=ticketID,proto3" json:"ticketID,omitempty"`
+	PaymentMethod string                 `protobuf:"bytes,4,opt,name=paymentMethod,proto3" json:"paymentMethod,omitempty"`
+	FechaEvento   string                 `protobuf:"bytes,5,opt,name=fechaEvento,proto3" json:"fechaEvento,omitempty"`
+	FechaCompra   string                 `protobuf:"bytes,6,opt,name=fechaCompra,proto3" json:"fechaCompra,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PurchaseEntry) Reset() {
+	*x = PurchaseEntry{}
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurchaseEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurchaseEntry) ProtoMessage() {}
+
+func (x *PurchaseEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurchaseEntry.ProtoReflect.Descriptor instead.
+func (*PurchaseEntry) Descriptor() ([]byte, []int) {
+	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PurchaseEntry) GetUUID() string {
+	if x != nil {
+		return x.UUID
+	}
+	return ""
+}
+
+func (x *PurchaseEntry) GetEventID() string {
+	if x != nil {
+		return x.EventID
+	}
+	return ""
+}
+
+func (x *PurchaseEntry) GetTicketID() string {
+	if x != nil {
+		return x.TicketID
+	}
+	return ""
+}
+
+func (x *PurchaseEntry) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *PurchaseEntry) GetFechaEvento() string {
+	if x != nil {
+		return x.FechaEvento
+	}
+	return ""
+}
+
+func (x *PurchaseEntry) GetFechaCompra() string {
+	if x != nil {
+		return x.FechaCompra
+	}
+	return ""
+}
+
 type GetEventsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Succes        bool                   `protobuf:"varint,1,opt,name=succes,proto3" json:"succes,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	Events        []*Event               `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -192,7 +276,7 @@ type GetEventsResponse struct {
 
 func (x *GetEventsResponse) Reset() {
 	*x = GetEventsResponse{}
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[2]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -204,7 +288,7 @@ func (x *GetEventsResponse) String() string {
 func (*GetEventsResponse) ProtoMessage() {}
 
 func (x *GetEventsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[2]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -217,12 +301,12 @@ func (x *GetEventsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEventsResponse.ProtoReflect.Descriptor instead.
 func (*GetEventsResponse) Descriptor() ([]byte, []int) {
-	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{2}
+	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetEventsResponse) GetSucces() bool {
+func (x *GetEventsResponse) GetSuccess() bool {
 	if x != nil {
-		return x.Succes
+		return x.Success
 	}
 	return false
 }
@@ -253,7 +337,7 @@ type PurchaseEventRequest struct {
 
 func (x *PurchaseEventRequest) Reset() {
 	*x = PurchaseEventRequest{}
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[3]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -265,7 +349,7 @@ func (x *PurchaseEventRequest) String() string {
 func (*PurchaseEventRequest) ProtoMessage() {}
 
 func (x *PurchaseEventRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[3]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +362,7 @@ func (x *PurchaseEventRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PurchaseEventRequest.ProtoReflect.Descriptor instead.
 func (*PurchaseEventRequest) Descriptor() ([]byte, []int) {
-	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{3}
+	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PurchaseEventRequest) GetUuid() string {
@@ -310,17 +394,17 @@ func (x *PurchaseEventRequest) GetQuantity() int32 {
 }
 
 type PurchaseEventResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Succes        bool                   `protobuf:"varint,1,opt,name=succes,proto3" json:"succes,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	TicketID      string                 `protobuf:"bytes,3,opt,name=ticketID,proto3" json:"ticketID,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Success        bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message        string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	PurchaseResult *PurchaseEntry         `protobuf:"bytes,3,opt,name=purchaseResult,proto3" json:"purchaseResult,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *PurchaseEventResponse) Reset() {
 	*x = PurchaseEventResponse{}
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[4]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -332,7 +416,7 @@ func (x *PurchaseEventResponse) String() string {
 func (*PurchaseEventResponse) ProtoMessage() {}
 
 func (x *PurchaseEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[4]
+	mi := &file_Consumer_proto_pbConsumer_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -345,12 +429,12 @@ func (x *PurchaseEventResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PurchaseEventResponse.ProtoReflect.Descriptor instead.
 func (*PurchaseEventResponse) Descriptor() ([]byte, []int) {
-	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{4}
+	return file_Consumer_proto_pbConsumer_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *PurchaseEventResponse) GetSucces() bool {
+func (x *PurchaseEventResponse) GetSuccess() bool {
 	if x != nil {
-		return x.Succes
+		return x.Success
 	}
 	return false
 }
@@ -362,11 +446,11 @@ func (x *PurchaseEventResponse) GetMessage() string {
 	return ""
 }
 
-func (x *PurchaseEventResponse) GetTicketID() string {
+func (x *PurchaseEventResponse) GetPurchaseResult() *PurchaseEntry {
 	if x != nil {
-		return x.TicketID
+		return x.PurchaseResult
 	}
-	return ""
+	return nil
 }
 
 var File_Consumer_proto_pbConsumer_proto protoreflect.FileDescriptor
@@ -390,20 +474,27 @@ const file_Consumer_proto_pbConsumer_proto_rawDesc = "" +
 	"spendStock\x12 \n" +
 	"\vfechaEvento\x18\t \x01(\tR\vfechaEvento\x12*\n" +
 	"\x10fechaPublicacion\x18\n" +
-	" \x01(\tR\x10fechaPublicacion\"p\n" +
-	"\x11GetEventsResponse\x12\x16\n" +
-	"\x06succes\x18\x01 \x01(\bR\x06succes\x12\x18\n" +
+	" \x01(\tR\x10fechaPublicacion\"\xc3\x01\n" +
+	"\rPurchaseEntry\x12\x12\n" +
+	"\x04UUID\x18\x01 \x01(\tR\x04UUID\x12\x18\n" +
+	"\aeventID\x18\x02 \x01(\tR\aeventID\x12\x1a\n" +
+	"\bticketID\x18\x03 \x01(\tR\bticketID\x12$\n" +
+	"\rpaymentMethod\x18\x04 \x01(\tR\rpaymentMethod\x12 \n" +
+	"\vfechaEvento\x18\x05 \x01(\tR\vfechaEvento\x12 \n" +
+	"\vfechaCompra\x18\x06 \x01(\tR\vfechaCompra\"r\n" +
+	"\x11GetEventsResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12)\n" +
 	"\x06events\x18\x03 \x03(\v2\x11.pbConsumer.EventR\x06events\"\x86\x01\n" +
 	"\x14PurchaseEventRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x18\n" +
 	"\aeventID\x18\x02 \x01(\tR\aeventID\x12$\n" +
 	"\rpaymentMethod\x18\x03 \x01(\tR\rpaymentMethod\x12\x1a\n" +
-	"\bquantity\x18\x04 \x01(\x05R\bquantity\"e\n" +
-	"\x15PurchaseEventResponse\x12\x16\n" +
-	"\x06succes\x18\x01 \x01(\bR\x06succes\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\x12\x1a\n" +
-	"\bticketID\x18\x03 \x01(\tR\bticketID2\xaa\x01\n" +
+	"\bquantity\x18\x04 \x01(\x05R\bquantity\"\x8e\x01\n" +
+	"\x15PurchaseEventResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12A\n" +
+	"\x0epurchaseResult\x18\x03 \x01(\v2\x19.pbConsumer.PurchaseEntryR\x0epurchaseResult2\xaa\x01\n" +
 	"\bConsumer\x12H\n" +
 	"\tGetEvents\x12\x1c.pbConsumer.GetEventsRequest\x1a\x1d.pbConsumer.GetEventsResponse\x12T\n" +
 	"\rPurchaseEvent\x12 .pbConsumer.PurchaseEventRequest\x1a!.pbConsumer.PurchaseEventResponseB\x0eZ\f./pbConsumerb\x06proto3"
@@ -420,25 +511,27 @@ func file_Consumer_proto_pbConsumer_proto_rawDescGZIP() []byte {
 	return file_Consumer_proto_pbConsumer_proto_rawDescData
 }
 
-var file_Consumer_proto_pbConsumer_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_Consumer_proto_pbConsumer_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_Consumer_proto_pbConsumer_proto_goTypes = []any{
 	(*GetEventsRequest)(nil),      // 0: pbConsumer.GetEventsRequest
 	(*Event)(nil),                 // 1: pbConsumer.Event
-	(*GetEventsResponse)(nil),     // 2: pbConsumer.GetEventsResponse
-	(*PurchaseEventRequest)(nil),  // 3: pbConsumer.PurchaseEventRequest
-	(*PurchaseEventResponse)(nil), // 4: pbConsumer.PurchaseEventResponse
+	(*PurchaseEntry)(nil),         // 2: pbConsumer.PurchaseEntry
+	(*GetEventsResponse)(nil),     // 3: pbConsumer.GetEventsResponse
+	(*PurchaseEventRequest)(nil),  // 4: pbConsumer.PurchaseEventRequest
+	(*PurchaseEventResponse)(nil), // 5: pbConsumer.PurchaseEventResponse
 }
 var file_Consumer_proto_pbConsumer_proto_depIdxs = []int32{
 	1, // 0: pbConsumer.GetEventsResponse.events:type_name -> pbConsumer.Event
-	0, // 1: pbConsumer.Consumer.GetEvents:input_type -> pbConsumer.GetEventsRequest
-	3, // 2: pbConsumer.Consumer.PurchaseEvent:input_type -> pbConsumer.PurchaseEventRequest
-	2, // 3: pbConsumer.Consumer.GetEvents:output_type -> pbConsumer.GetEventsResponse
-	4, // 4: pbConsumer.Consumer.PurchaseEvent:output_type -> pbConsumer.PurchaseEventResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 1: pbConsumer.PurchaseEventResponse.purchaseResult:type_name -> pbConsumer.PurchaseEntry
+	0, // 2: pbConsumer.Consumer.GetEvents:input_type -> pbConsumer.GetEventsRequest
+	4, // 3: pbConsumer.Consumer.PurchaseEvent:input_type -> pbConsumer.PurchaseEventRequest
+	3, // 4: pbConsumer.Consumer.GetEvents:output_type -> pbConsumer.GetEventsResponse
+	5, // 5: pbConsumer.Consumer.PurchaseEvent:output_type -> pbConsumer.PurchaseEventResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_Consumer_proto_pbConsumer_proto_init() }
@@ -452,7 +545,7 @@ func file_Consumer_proto_pbConsumer_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_Consumer_proto_pbConsumer_proto_rawDesc), len(file_Consumer_proto_pbConsumer_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

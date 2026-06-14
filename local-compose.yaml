@@ -2,7 +2,7 @@ services:
   broker:
     build:
       context: ./Broker
-    container_name: broker
+    container_name: broker-container
     ports:
       - "5001:5001"
     environment:
@@ -16,7 +16,7 @@ services:
   banco:
     build:
       context: ./Banco
-    container_name: banco
+    container_name: banco-container
     ports:
       - "5000:5000"
     volumes:
@@ -24,8 +24,8 @@ services:
     environment:
       - "NAME=Banco"
       - "PORT=5000"
-      - "BROKER_URL=10.35.168.35:5001"
-      - "MYDIRECTION=10.35.168.38:5000"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=banco:5000"
     networks:
       default:
         aliases:
@@ -34,94 +34,88 @@ services:
   consumer1:
     build:
       context: ./Consumer
-    container_name: consumer-1
     ports:
-      - "6001:6001"
+      - "6001-6002:6000"
     volumes:
       - ./Consumer/keys:/app/keys
       - ./Consumer/output:/app/output
     environment:
       - "NAME=user_1"
-      - "PORT=6001"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=6000"
+      - "BROKER_URL=broker:5001"
 
   consumer2:
     build:
       context: ./Consumer
-    container_name: consumer-2
     ports:
-      - "6002:6002"
+      - "6001-6002:6000"
     volumes:
       - ./Consumer/keys:/app/keys
       - ./Consumer/output:/app/output
     environment:
       - "NAME=user_2"
-      - "PORT=6002"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=6000"
+      - "BROKER_URL=broker:5001"
 
   productor1:
     build:
       context: ./Productor
-    container_name: productor-1
     ports:
-      - "5006:5006"
+      - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
       - ./Productor/input:/app/input
     environment:
       - "NAME=DataClub"
-      - "PORT=5006"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=5003"
+      - "BROKER_URL=broker:5001"
       - "INPUT_FILE=catalogo_eventos_30.json"
 
   productor2:
     build:
       context: ./Productor
-    container_name: productor-2
     ports:
-      - "5007:5007"
+      - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
       - ./Productor/input:/app/input
     environment:
       - "NAME=Dockers Night"
-      - "PORT=5007"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=5003"
+      - "BROKER_URL=broker:5001"
       - "INPUT_FILE=catalogo_eventos_30.json"
     
   productor3:
     build:
       context: ./Productor
-    container_name: productor-3
     ports:
-      - "5008:5008"
+      - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
       - ./Productor/input:/app/input
     environment:
       - "NAME=GoLounge"
-      - "PORT=5008"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=5003"
+      - "BROKER_URL=broker:5001"
       - "INPUT_FILE=catalogo_eventos_30.json"
 
   productor4:
     build:
       context: ./Productor
-    container_name: productor-4
     ports:
-      - "5009:5009"
+      - "5003-5009:5003"
     volumes:
       - ./Productor/keys:/app/keys
       - ./Productor/input:/app/input
     environment:
       - "NAME=GeorgieHouse"
-      - "PORT=5009"
-      - "BROKER_URL=10.35.168.35:5001"
+      - "PORT=5003"
+      - "BROKER_URL=broker:5001"
       - "INPUT_FILE=catalogo_eventos_30.json"
   node1:
     build:
       context: ./DynamoDB
-    container_name: node-1
+    container_name: node1
     ports:
       - "8001:8001"
     volumes:
@@ -129,8 +123,8 @@ services:
     environment:
       - "NAME=DynamoDB-1"
       - "PORT=8001"
-      - "BROKER_URL=10.35.168.35:5001"
-      - "MYDIRECTION=10.35.168.38:8001"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=node1:8001"
     networks:
       default:
         aliases:
@@ -139,16 +133,16 @@ services:
   node2:
     build:
       context: ./DynamoDB
-    container_name: node-2
+    container_name: node2
     ports:
-      - "8002:8002"
+      - "8002:8000"
     volumes:
       - ./DynamoDB/Data:/app/Data
     environment:
       - "NAME=DynamoDB-2"
       - "PORT=8002"
-      - "BROKER_URL=10.35.168.35:5001"
-      - "MYDIRECTION=10.35.168.37:8002"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=node2:8002"
     networks:
       default:
         aliases:
@@ -157,16 +151,16 @@ services:
   node3:
     build:
       context: ./DynamoDB
-    container_name: node-3
+    container_name: node3
     ports:
-      - "8003:8003"
+      - "8003:8000"
     volumes:
       - ./DynamoDB/Data:/app/Data
     environment:
       - "NAME=DynamoDB-3"
       - "PORT=8003"
-      - "BROKER_URL=10.35.168.35:5001"
-      - "MYDIRECTION=10.35.168.36:8003"
+      - "BROKER_URL=broker:5001"
+      - "MYDIRECTION=node3:8003"
     networks:
       default:
         aliases:

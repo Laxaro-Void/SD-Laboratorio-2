@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
-	"context"
+	"os"
 	"fmt"
 	"log"
-	"os"
 	"time"
+	"bufio"
+	"context"
 	"math/rand"
 
 	"encoding/json"

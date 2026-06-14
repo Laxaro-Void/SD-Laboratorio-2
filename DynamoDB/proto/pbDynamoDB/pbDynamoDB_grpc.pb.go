@@ -23,6 +23,7 @@ const (
 	DynamoDB_CreateTable_FullMethodName  = "/pbDynamoDB.DynamoDB/CreateTable"
 	DynamoDB_PutItem_FullMethodName      = "/pbDynamoDB.DynamoDB/PutItem"
 	DynamoDB_GetItem_FullMethodName      = "/pbDynamoDB.DynamoDB/GetItem"
+	DynamoDB_GetTable_FullMethodName     = "/pbDynamoDB.DynamoDB/GetTable"
 	DynamoDB_SyncAllData_FullMethodName  = "/pbDynamoDB.DynamoDB/SyncAllData"
 	DynamoDB_GetAllData_FullMethodName   = "/pbDynamoDB.DynamoDB/GetAllData"
 )
@@ -35,6 +36,7 @@ type DynamoDBClient interface {
 	CreateTable(ctx context.Context, in *CreateTableRequest, opts ...grpc.CallOption) (*CreateTableResponse, error)
 	PutItem(ctx context.Context, in *PutItemRequest, opts ...grpc.CallOption) (*PutItemResponse, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
+	GetTable(ctx context.Context, in *GetTableRequest, opts ...grpc.CallOption) (*GetTableResponse, error)
 	SyncAllData(ctx context.Context, in *SyncAllDataRequest, opts ...grpc.CallOption) (*SyncAllDataResponse, error)
 	GetAllData(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllDataResponse, error)
 }
@@ -87,6 +89,16 @@ func (c *dynamoDBClient) GetItem(ctx context.Context, in *GetItemRequest, opts .
 	return out, nil
 }
 
+func (c *dynamoDBClient) GetTable(ctx context.Context, in *GetTableRequest, opts ...grpc.CallOption) (*GetTableResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTableResponse)
+	err := c.cc.Invoke(ctx, DynamoDB_GetTable_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *dynamoDBClient) SyncAllData(ctx context.Context, in *SyncAllDataRequest, opts ...grpc.CallOption) (*SyncAllDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncAllDataResponse)
@@ -115,6 +127,7 @@ type DynamoDBServer interface {
 	CreateTable(context.Context, *CreateTableRequest) (*CreateTableResponse, error)
 	PutItem(context.Context, *PutItemRequest) (*PutItemResponse, error)
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
+	GetTable(context.Context, *GetTableRequest) (*GetTableResponse, error)
 	SyncAllData(context.Context, *SyncAllDataRequest) (*SyncAllDataResponse, error)
 	GetAllData(context.Context, *Empty) (*GetAllDataResponse, error)
 	mustEmbedUnimplementedDynamoDBServer()
@@ -138,6 +151,9 @@ func (UnimplementedDynamoDBServer) PutItem(context.Context, *PutItemRequest) (*P
 }
 func (UnimplementedDynamoDBServer) GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetItem not implemented")
+}
+func (UnimplementedDynamoDBServer) GetTable(context.Context, *GetTableRequest) (*GetTableResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTable not implemented")
 }
 func (UnimplementedDynamoDBServer) SyncAllData(context.Context, *SyncAllDataRequest) (*SyncAllDataResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncAllData not implemented")
@@ -238,6 +254,24 @@ func _DynamoDB_GetItem_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DynamoDB_GetTable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DynamoDBServer).GetTable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DynamoDB_GetTable_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DynamoDBServer).GetTable(ctx, req.(*GetTableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DynamoDB_SyncAllData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncAllDataRequest)
 	if err := dec(in); err != nil {
@@ -296,6 +330,10 @@ var DynamoDB_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetItem",
 			Handler:    _DynamoDB_GetItem_Handler,
+		},
+		{
+			MethodName: "GetTable",
+			Handler:    _DynamoDB_GetTable_Handler,
 		},
 		{
 			MethodName: "SyncAllData",

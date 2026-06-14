@@ -61,14 +61,14 @@ func (s *BancoServer) ProcessPayment(ctx context.Context, req *pbBancoUSM.Paymen
 	}
 
 	if rand.Float32() > p {
-		log.Printf("ID: %s, Amount: %q, Method: %s, Result: Fail\n", req.Uuid, req.Amount, req.PaymentMethod)
+		log.Printf("ID: %s, Amount: %d, Method: %s, Result: Fail\n", req.Uuid, req.Amount, req.PaymentMethod)
 		return &pbBancoUSM.PaymentResponse{
 			Success: false,
 			Message: "Payment failed due to insufficient funds or other issues",
 		}, nil
 	}
 
-	log.Printf("ID: %s, Amount: %q, Method: %s, Result: Success\n", req.Uuid, req.Amount, req.PaymentMethod)
+	log.Printf("ID: %s, Amount: %d, Method: %s, Result: Success\n", req.Uuid, req.Amount, req.PaymentMethod)
 	return &pbBancoUSM.PaymentResponse{
 		Success: true,
 		Message: "Payment successful",

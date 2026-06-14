@@ -8,6 +8,7 @@ service DynamoDB {
     rpc CreateTable(CreateTableRequest) returns (CreateTableResponse);
     rpc PutItem(PutItemRequest) returns (PutItemResponse);
     rpc GetItem(GetItemRequest) returns (GetItemResponse);
+    rpc GetTable(GetTableRequest) returns (GetTableResponse);
 
     rpc SyncAllData(SyncAllDataRequest) returns (SyncAllDataResponse);
     rpc GetAllData(Empty) returns (GetAllDataResponse);
@@ -57,9 +58,20 @@ message GetItemResponse {
     string message = 3;
 }
 
+message GetTableRequest {
+    string table_name = 1;
+}
+
+message GetTableResponse {
+    bool success = 1;
+    Table data = 2;
+    string message = 3;
+}
+
 message Table {
     string name = 1;
-    map<string, bytes> data = 2;
+    repeated string keys = 2;
+    repeated bytes value = 3;
 }
 
 message SyncAllDataRequest {

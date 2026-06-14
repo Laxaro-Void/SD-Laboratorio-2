@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"sort"
 	"sync"
 	"time"
 
@@ -91,9 +92,15 @@ func (s *NodeServer) SyncAllData(ctx context.Context, req *pbDynamoDB.SyncAllDat
 	}
 
 	for _, table := range req.AllData {
+		var newTable = make(map[string][]byte)
+
+		for idx, key := range table.Keys {
+			newTable[key] = table.Value[idx]
+		}
+
 		s.Node.Tables[table.Name] = Table{
 			Name: table.Name,
-			Data: table.Data,
+			Data: newTable,
 		}
 	}
 
@@ -114,9 +121,18 @@ func (s *NodeServer) GetAllData(ctx context.Context, req *pbDynamoDB.Empty) (*pb
 	}
 
 	for _, table := range s.Node.Tables {
+		var keys []string
+		var values [][]byte
+
+		for key, value := range table.Data {
+			keys = append(keys, key)
+			values = append(values, value)
+		}
+
 		res.AllData = append(res.AllData, &pbDynamoDB.Table{
 			Name: table.Name,
-			Data: table.Data,
+			Keys: keys,
+			Value: values,
 		})
 	}
 
@@ -168,6 +184,44 @@ func (s *NodeServer) PutItem(ctx context.Context, req *pbDynamoDB.PutItemRequest
 	return &pbDynamoDB.PutItemResponse{
 		Success: true,
 		Message: "Item added successfully",
+	}, nil
+}
+
+func (s *NodeServer) GetTable(ctx context.Context, req *pbDynamoDB.GetTableRequest) (*pbDynamoDB.GetTableResponse, error) {
+	s.Node.mu.Lock()
+	defer s.Node.mu.Unlock()
+
+	table, exists := s.Node.Tables[req.TableName]
+	if !exists {
+		return &pbDynamoDB.GetTableResponse{
+			Success: false,
+			Message: "Table does not exist",
+			Data: nil,
+		}, nil
+	}
+
+	var keys []string
+	var values [][]byte
+
+	for key := range table.Data {
+		keys = append(keys, key)
+	}
+
+	sort.Strings(keys)
+	
+	for _, k := range keys {
+		values = append(values, table.Data[k])
+	}
+
+	log.Printf("[NODE] Got table %s", req.TableName)
+	return &pbDynamoDB.GetTableResponse{
+		Success: true,
+		Message: "Item retrieved successfully",
+		Data: &pbDynamoDB.Table{
+				Name: table.Name,
+				Keys: keys,
+				Value: values,
+			},
 	}, nil
 }
 

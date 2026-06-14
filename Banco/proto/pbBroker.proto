@@ -9,10 +9,6 @@ service Broker {
     rpc Handshake(HandshakeRequest) returns (HandshakeResponse);
 }
 
-message Data {
-    int32 data = 1;
-}
-
 message Empty {
 
 }

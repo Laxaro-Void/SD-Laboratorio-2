@@ -26,8 +26,17 @@ message Event {
     string fechaPublicacion = 10;
 }
 
+message PurchaseEntry {
+    string UUID = 1;
+    string eventID = 2;
+    string ticketID = 3;
+    string paymentMethod = 4;
+    string fechaEvento = 5;
+    string fechaCompra = 6;
+}
+
 message GetEventsResponse {
-    bool succes = 1;
+    bool success = 1;
     string message = 2;
     repeated Event events = 3;
 }
@@ -40,7 +49,7 @@ message PurchaseEventRequest {
 }
 
 message PurchaseEventResponse {
-    bool succes = 1;
+    bool success = 1;
     string message = 2;
-    string ticketID = 3;
+    PurchaseEntry purchaseResult = 3;
 }
