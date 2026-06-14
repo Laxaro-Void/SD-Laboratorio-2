@@ -15,8 +15,8 @@ docker-VM2:
 	sudo docker-compose -f compose.yaml up productor1 productor2 productor3 productor4 node3
 
 docker-VM3:
-	sudo docker-compose -f compose.yaml build consumidor1 consumidor2 node2
-	sudo docker-compose -f compose.yaml up consumidor1 consumidor2 node2
+	sudo docker-compose -f compose.yaml build consumer1 consumer1 node2
+	sudo docker-compose -f compose.yaml up consumer1 consumer1 node2
 
 docker-VM4:
 	sudo docker-compose -f compose.yaml build banco node1
